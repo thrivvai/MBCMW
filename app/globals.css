@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --font-inter: "Inter", system-ui, sans-serif;
+  --font-space: "Space Grotesk", system-ui, sans-serif;
+  --font-syne: "Syne", system-ui, sans-serif;
 }
 
 * {
@@ -15,32 +16,66 @@ html {
 }
 
 body {
-  background-color: #0A0E1A;
-  color: #F8FAFC;
-  font-family: var(--font-inter);
+  background-color: #030507;
+  color: #E8E4D8;
+  font-family: var(--font-space);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Custom keyframes ────────────────────────────────────────────────────── */
+/* ─── Typography ──────────────────────────────────────────────────────────── */
+.font-display {
+  font-family: var(--font-syne);
+}
+
+/* ─── Glassmorphism utility ───────────────────────────────────────────────── */
+.glass {
+  background: rgba(13, 16, 32, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ─── Cosmic keyframes ────────────────────────────────────────────────────── */
 @keyframes starPulse {
-  0%, 100% { opacity: 0.15; transform: scale(1); }
-  50%       { opacity: 0.9;  transform: scale(1.4); }
+  0%, 100% { opacity: 0.08; transform: scale(1); }
+  50%       { opacity: 1;    transform: scale(1.6); }
+}
+
+@keyframes starGlow {
+  0%, 100% { opacity: 0.2; box-shadow: 0 0 0 0 transparent; }
+  50%       { opacity: 0.9; box-shadow: 0 0 6px 2px currentColor; }
+}
+
+@keyframes cosmicDrift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(2%, 1.5%) scale(1.03); }
+  66%       { transform: translate(-1.5%, 2%) scale(0.98); }
+}
+
+@keyframes auroraShift {
+  0%, 100% { opacity: 0.08; }
+  50%       { opacity: 0.22; }
 }
 
 @keyframes floatA {
   0%, 100% { transform: translateY(0px)   rotate(0deg); }
-  50%       { transform: translateY(-18px) rotate(6deg); }
+  50%       { transform: translateY(-20px) rotate(8deg); }
 }
 
 @keyframes floatB {
   0%, 100% { transform: translateY(0px)  rotate(0deg); }
-  50%       { transform: translateY(14px) rotate(-4deg); }
+  50%       { transform: translateY(16px) rotate(-5deg); }
 }
 
 @keyframes floatC {
-  0%, 100% { transform: translateY(-8px) rotate(0deg); }
-  50%       { transform: translateY(8px)  rotate(8deg); }
+  0%, 100% { transform: translateY(-10px) rotate(0deg); }
+  50%       { transform: translateY(10px)  rotate(10deg); }
 }
 
 @keyframes gradientShift {
@@ -50,11 +85,11 @@ body {
 
 @keyframes neonPulse {
   0%, 100% { box-shadow: 0 0 8px currentColor, 0 0 24px currentColor; }
-  50%       { box-shadow: 0 0 18px currentColor, 0 0 50px currentColor; }
+  50%       { box-shadow: 0 0 18px currentColor, 0 0 50px currentColor, 0 0 80px currentColor; }
 }
 
 @keyframes scoreCount {
-  from { transform: translateY(12px); opacity: 0; }
+  from { transform: translateY(14px); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
 }
 
@@ -63,7 +98,33 @@ body {
   100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
 }
 
-/* ─── Reduced motion: disable all animations for accessibility ────────────── */
+@keyframes auroraBar {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes orbitSlow {
+  0%   { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Aurora progress bar ─────────────────────────────────────────────────── */
+.aurora-bar {
+  background: linear-gradient(
+    90deg,
+    #6D28D9, #8B5CF6, #00CCD8, #E8A820, #8B5CF6, #6D28D9
+  );
+  background-size: 300% 100%;
+  animation: auroraBar 4s ease infinite;
+}
+
+/* ─── Reduced motion: disable all animations ──────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -75,17 +136,8 @@ body {
   }
 }
 
-/* Custom scrollbar for dark theme */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #0A0E1A;
-}
-::-webkit-scrollbar-thumb {
-  background: #2D3555;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #6366F1;
-}
+/* ─── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #030507; }
+::-webkit-scrollbar-thumb { background: #1A1F35; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #8B5CF6; }
