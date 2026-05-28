@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Syne, Space_Grotesk } from "next/font/google";
+import { Playfair_Display, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const syne = Syne({
+const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-syne",
   display: "swap",
 });
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${syne.variable} ${spaceGrotesk.variable}`}>
+      <html lang="en" className={`${playfair.variable} ${spaceGrotesk.variable}`}>
         <body>{children}</body>
       </html>
     </ClerkProvider>

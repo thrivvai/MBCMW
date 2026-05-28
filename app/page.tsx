@@ -1,316 +1,158 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-import { StarField } from "@/components/ui/StarField";
-import { CosmicBackground } from "@/components/ui/CosmicBackground";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
 const HOW_IT_WORKS = [
-  { step: "01", title: "Teacher creates a session", desc: "Pick a grade band and missions. Get a 6-letter join code in seconds.", icon: "👩‍🏫" },
-  { step: "02", title: "Students join instantly", desc: "No accounts needed. Students enter the code and a nickname — that's it.", icon: "🎮" },
-  { step: "03", title: "Missions come alive", desc: "Real-world money scenarios with animated stories, math challenges, and decision points.", icon: "🏙️" },
-  { step: "04", title: "Teacher sees everything live", desc: "Watch student progress update in real time. Export results as CSV.", icon: "📊" },
+  { step: "01", title: "Create a Session",    desc: "Teachers select a grade band and instantly generate a secure 6-letter join code." },
+  { step: "02", title: "Students Join",        desc: "No cumbersome logins. Students enter the code and a nickname for instant access." },
+  { step: "03", title: "Immersive Missions",   desc: "Interact with real-world financial scenarios through an engaging visual interface." },
+  { step: "04", title: "Live Dashboard",       desc: "Teachers monitor class progression and student performance metrics in real-time." },
 ];
 
 const GRADE_BANDS = [
   {
-    band: "Grades 4–5",
-    label: "Foundations",
-    desc: "Budgeting, price comparison, needs vs. wants, saving goals",
-    missions: ["Class Party Budget", "Lunch Combo Showdown", "Save for the Bike"],
-    accentColor: "rgba(139,92,246,",
-    borderColor: "rgba(139,92,246,0.25)",
-    tagColor: "rgba(139,92,246,0.12)",
-    tagText: "#C4B5FD",
-    emoji: "🏛️",
+    band: "Foundations",
+    label: "Fundamental Economics",
+    desc: "Simulate pricing variables, core supply constraints, and foundational budget modeling.",
+    missions: ["Class Resource Audit", "Lunch Protocol", "Savings Trajectory"],
+    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070&auto=format&fit=crop",
   },
   {
-    band: "Grades 6–8",
-    label: "Applied Math",
-    desc: "Percentages, interest, profit & loss, sales tax, markup",
-    missions: ["The Sneaker Drop", "Food Truck Friday", "Streaming Subscription Math"],
-    accentColor: "rgba(232,168,32,",
-    borderColor: "rgba(232,168,32,0.25)",
-    tagColor: "rgba(232,168,32,0.10)",
-    tagText: "#F5C040",
-    emoji: "🛍️",
+    band: "Intermediate",
+    label: "Applied Variable Mathematics",
+    desc: "Calculate compound vectors, simulate taxation layers, and model localized profit margins.",
+    missions: ["Market Distribution", "Mobile Vendor Logistics", "Subscription Deficits"],
+    image: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2048&auto=format&fit=crop",
   },
   {
-    band: "Grades 9–12",
-    label: "Financial Strategy",
-    desc: "Credit, investing, income, compound growth, entrepreneurship",
-    missions: ["Summer Job Budget", "Credit Card Trap", "Startup Square Pitch"],
-    accentColor: "rgba(0,204,216,",
-    borderColor: "rgba(0,204,216,0.20)",
-    tagColor: "rgba(0,204,216,0.08)",
-    tagText: "#67E8F9",
-    emoji: "🚀",
+    band: "Advanced",
+    label: "Financial Architecture",
+    desc: "Evaluate multi-tier credit structures, systemic risk strategies, and macro-market investments.",
+    missions: ["Labor Compensation", "Credit Vulnerability", "Enterprise Pitch"],
+    image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2070&auto=format&fit=crop",
   },
 ];
-
-function HeroGrid() {
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
-            <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#grid)" />
-      </svg>
-      {/* Radial fade so grid fades at edges */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: "radial-gradient(ellipse 80% 70% at 50% 50%, transparent 0%, #030507 100%)",
-        }}
-      />
-    </div>
-  );
-}
 
 export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 500], [0, -100]);
-  const heroOpacity = useTransform(scrollY, [0, 350], [1, 0]);
+  const heroY = useTransform(scrollY, [0, 800], [0, -350]);
+  const heroOpacity = useTransform(scrollY, [0, 600], [1, 0]);
+  const heroScale = useTransform(scrollY, [0, 800], [1, 0.85]);
 
   return (
-    <main className="min-h-screen bg-[#030507] overflow-x-hidden">
-      <StarField count={120} />
-      <CosmicBackground />
+    <div className="relative min-h-screen w-full bg-[#010101]">
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section
         ref={heroRef}
-        className="relative min-h-screen flex flex-col items-center justify-center px-6 text-center overflow-hidden"
+        className="relative min-h-screen flex flex-col items-center justify-center text-center overflow-hidden"
+        style={{ perspective: 1500 }}
       >
-        <HeroGrid />
+        {/* Photorealistic space background */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop"
+            alt=""
+            className="w-full h-full object-cover object-center opacity-60 mix-blend-luminosity"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#010101]/30 via-transparent to-[#010101]" />
+        </div>
 
         <motion.div
-          style={{ y: heroY, opacity: heroOpacity }}
-          className="relative z-10 max-w-5xl mx-auto"
+          style={{ y: heroY, opacity: heroOpacity, scale: heroScale }}
+          className="relative z-10 max-w-6xl mx-auto w-full px-6 pt-20"
         >
-          {/* Eyebrow badge */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
             className="flex justify-center mb-10"
           >
-            <span
-              className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full text-xs font-semibold tracking-widest uppercase"
-              style={{
-                background: "rgba(139,92,246,0.10)",
-                border: "1px solid rgba(139,92,246,0.30)",
-                color: "#C4B5FD",
-                letterSpacing: "0.12em",
-              }}
-            >
-              <span
-                className="w-1.5 h-1.5 rounded-full bg-[#8B5CF6]"
-                style={{ animation: "neonPulse 2s ease-in-out infinite", boxShadow: "0 0 8px #8B5CF6" }}
-              />
-              Grades 4–12 · Browser-based · No apps needed
-            </span>
+            <div className="inline-flex items-center px-4 py-2 border border-white/20 glass-light text-xs font-semibold tracking-[0.2em] uppercase text-[#F0F0F0]">
+              MathWorld Research Platform
+            </div>
           </motion.div>
 
-          {/* Headline */}
           <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="font-display font-extrabold tracking-tight leading-[0.9] mb-8"
-            style={{ fontSize: "clamp(3.5rem, 12vw, 9rem)" }}
+            initial={{ opacity: 0, scale: 0.8, rotateX: 20, y: 50 }}
+            animate={{ opacity: 1, scale: 1, rotateX: 0, y: 0 }}
+            transition={{ duration: 1.8, delay: 0.3, type: "spring", bounce: 0.3 }}
+            className="font-display font-medium tracking-tight leading-[1] mb-8 text-[#F0F0F0]"
+            style={{ fontSize: "clamp(3.5rem, 12vw, 8rem)" }}
           >
-            <span style={{ color: "#E8E4D8" }}>Math that</span>
-            <br />
-            <span
-              className="text-transparent bg-clip-text"
-              style={{
-                backgroundImage: "linear-gradient(135deg, #E8A820 0%, #F5C040 30%, #00CCD8 60%, #8B5CF6 100%)",
-                backgroundSize: "200% 200%",
-                animation: "gradientShift 5s ease infinite",
-              }}
-            >
-              feels real.
-            </span>
+            Infinite variables.<br />
+            <span className="text-[#888888]">One terminal.</span>
           </motion.h1>
 
-          {/* Sub-headline */}
           <motion.p
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.35 }}
-            className="text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed mb-12"
-            style={{ color: "#5A5A6E", fontWeight: 300 }}
+            transition={{ duration: 1.5, delay: 0.5 }}
+            className="text-lg sm:text-2xl max-w-2xl mx-auto leading-relaxed mb-16 text-[#C0C0C0] font-light"
           >
-            Financial math missions that turn classroom laptops into an immersive city adventure.
-            Students solve real money problems. Teachers see results live.
+            A high-fidelity spatial financial simulator engineered for precision instruction
+            and systemic problem solving.
           </motion.p>
 
-          {/* CTAs */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.5 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
+            transition={{ duration: 1.5, delay: 0.7 }}
+            className="flex flex-col sm:flex-row gap-6 justify-center items-center"
           >
-            <Link href="/join">
-              <button
-                className="w-full sm:w-auto text-base px-8 py-4 rounded-xl font-semibold transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
-                style={{
-                  background: "linear-gradient(135deg, #E8A820, #F5C040 50%, #00CCD8)",
-                  backgroundSize: "200% 100%",
-                  color: "#030507",
-                  boxShadow: "0 0 40px rgba(232,168,32,0.25), 0 0 80px rgba(0,204,216,0.10)",
-                }}
-              >
-                Join a Classroom →
-              </button>
-            </Link>
-            <Link href="/sign-in">
-              <Button size="lg" variant="secondary" className="w-full sm:w-auto">
-                Teacher Login
+            <Link href="/join" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full min-w-[220px] rounded-sm bg-[#F0F0F0] text-[#010101] hover:bg-white hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] transition-all">
+                Student Login
               </Button>
             </Link>
+            <Link href="/sign-in" className="w-full sm:w-auto">
+              <button className="px-8 py-4 border border-white/20 text-[#F0F0F0] text-lg min-w-[220px] rounded-sm hover:bg-white/10 transition-all font-semibold">
+                Teacher Sign In
+              </button>
+            </Link>
           </motion.div>
-
-          {/* Social proof */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.9 }}
-            className="text-sm"
-            style={{ color: "#2A2A3A" }}
-          >
-            No student accounts · No app installs · Works on any Chromebook
-          </motion.p>
-        </motion.div>
-
-        {/* Scroll cue */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.4 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        >
-          <span className="text-xs uppercase tracking-[0.2em]" style={{ color: "#2A2A3A" }}>Scroll</span>
-          <motion.div
-            animate={{ scaleY: [1, 1.3, 1], opacity: [0.3, 0.7, 0.3] }}
-            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-            className="w-px h-12 origin-top"
-            style={{ background: "linear-gradient(to bottom, rgba(139,92,246,0.6), transparent)" }}
-          />
         </motion.div>
       </section>
 
-      {/* ── How it works ─────────────────────────────────────────────────── */}
-      <section className="relative z-10 px-6 py-24" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
-        <div className="max-w-5xl mx-auto">
+      {/* ── How It Works ─────────────────────────────────────────────────── */}
+      <section className="relative z-10 px-6 py-40 border-t border-white/10 bg-[#010101]">
+        <div className="max-w-7xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="text-center mb-16"
+            viewport={{ once: true, margin: "-100px" }}
+            className="mb-24"
           >
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] mb-4" style={{ color: "#8B5CF6" }}>
+            <h2 className="font-display text-4xl sm:text-6xl text-[#F0F0F0] tracking-tight mb-6">
               How It Works
-            </p>
-            <h2 className="font-display font-bold text-4xl sm:text-5xl" style={{ color: "#E8E4D8" }}>
-              Classroom-ready in under 5 minutes
             </h2>
+            <div className="h-[1px] w-full max-w-[200px] bg-white/30" />
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {HOW_IT_WORKS.map(({ step, title, desc, icon }, i) => (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {HOW_IT_WORKS.map(({ step, title, desc }, i) => (
               <motion.div
                 key={step}
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.55, delay: i * 0.1 }}
-                className="relative rounded-2xl p-6"
-                style={{
-                  background: "rgba(13,16,32,0.8)",
-                  border: "1px solid rgba(255,255,255,0.05)",
-                  backdropFilter: "blur(8px)",
-                }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.8, delay: i * 0.1 }}
+                className="group relative"
               >
-                <div className="text-4xl mb-4">{icon}</div>
-                <p className="text-xs font-bold uppercase tracking-[0.15em] mb-2" style={{ color: "#8B5CF6" }}>{step}</p>
-                <h3 className="font-semibold mb-2 leading-snug" style={{ color: "#E8E4D8" }}>{title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: "#5A5A6E" }}>{desc}</p>
-                {i < HOW_IT_WORKS.length - 1 && (
-                  <div className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 z-10 text-lg" style={{ color: "#2A2A3A" }}>→</div>
-                )}
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Grade bands ──────────────────────────────────────────────────── */}
-      <section className="relative z-10 px-6 py-24">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] mb-4" style={{ color: "#E8A820" }}>
-              Curriculum
-            </p>
-            <h2 className="font-display font-bold text-4xl sm:text-5xl" style={{ color: "#E8E4D8" }}>
-              Three grade bands. Real scenarios.
-            </h2>
-          </motion.div>
-
-          <div className="space-y-4">
-            {GRADE_BANDS.map(({ band, label, desc, missions, accentColor, borderColor, tagColor, tagText, emoji }, i) => (
-              <motion.div
-                key={band}
-                initial={{ opacity: 0, x: i % 2 === 0 ? -40 : 40 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: i * 0.08 }}
-                className="rounded-2xl p-7 transition-all duration-300"
-                style={{
-                  background: "rgba(13,16,32,0.7)",
-                  border: `1px solid ${borderColor}`,
-                  backdropFilter: "blur(8px)",
-                }}
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center gap-5">
-                  <div className="text-4xl">{emoji}</div>
-                  <div className="flex-1">
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <span className="text-xs font-bold uppercase tracking-wider" style={{ color: tagText }}>{band}</span>
-                      <span style={{ color: "#2A2A3A" }}>·</span>
-                      <span className="font-semibold" style={{ color: "#E8E4D8" }}>{label}</span>
-                    </div>
-                    <p className="text-sm" style={{ color: "#5A5A6E" }}>{desc}</p>
+                <div className="h-full border border-white/10 p-10 bg-[#050505] hover:bg-[#0a0a0a] hover:-translate-y-2 hover:scale-[1.02] hover:border-[#D4AF37]/50 hover:shadow-[0_20px_40px_rgba(0,0,0,0.8)] transition-all duration-500 rounded-sm">
+                  <div className="flex items-center gap-4 mb-10">
+                    <p className="text-sm font-sans tracking-[0.2em] text-[#888888] group-hover:text-[#D4AF37] transition-colors duration-500">{step}</p>
+                    <div className="h-px bg-white/10 flex-1 group-hover:bg-[#D4AF37]/30 transition-colors duration-500" />
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {missions.map((m) => (
-                      <span
-                        key={m}
-                        className="text-xs px-3 py-1 rounded-full"
-                        style={{
-                          background: tagColor,
-                          color: tagText,
-                          border: `1px solid ${borderColor}`,
-                        }}
-                      >
-                        {m}
-                      </span>
-                    ))}
-                  </div>
+                  <h3 className="text-xl font-display font-medium mb-4 text-[#F0F0F0] group-hover:text-white transition-colors duration-500">
+                    {title}
+                  </h3>
+                  <p className="text-sm text-[#888888] font-light leading-relaxed">{desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -318,48 +160,82 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Final CTA ─────────────────────────────────────────────────────── */}
-      <section className="relative z-10 px-6 py-28" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-2xl mx-auto text-center"
-        >
-          <div
-            className="text-7xl mb-8 inline-block"
-            style={{ filter: "drop-shadow(0 0 30px rgba(232,168,32,0.4))" }}
-          >
-            🏙️
-          </div>
-          <h2 className="font-display font-bold text-4xl sm:text-5xl mb-4" style={{ color: "#E8E4D8" }}>
-            Ready to enter MathWorld?
-          </h2>
-          <p className="mb-10 text-lg" style={{ color: "#5A5A6E", fontWeight: 300 }}>
-            Teachers: create a session in 60 seconds. Students: enter the code.
-            No downloads. No friction.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/join">
-              <button
-                className="w-full sm:w-auto text-base px-8 py-4 rounded-xl font-semibold transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
-                style={{
-                  background: "linear-gradient(135deg, #E8A820, #F5C040 50%, #00CCD8)",
-                  color: "#030507",
-                  boxShadow: "0 0 40px rgba(232,168,32,0.20), 0 0 80px rgba(0,204,216,0.08)",
-                }}
+      {/* ── Grade Bands — Alternating image/text ─────────────────────────── */}
+      <section className="relative bg-[#010101]">
+        {GRADE_BANDS.map(({ band, label, desc, missions, image }, i) => (
+          <div key={band} className="grid grid-cols-1 md:grid-cols-2 min-h-[70vh] border-t border-white/10 overflow-hidden">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.7, rotateY: i % 2 === 0 ? 30 : -30 }}
+              whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 1.8, type: "spring", bounce: 0.3 }}
+              className={`relative overflow-hidden ${i % 2 === 0 ? "md:order-2" : "md:order-1"}`}
+              style={{ perspective: 1200 }}
+            >
+              <img
+                src={image}
+                alt={label}
+                className="absolute inset-0 w-full h-full object-cover object-center opacity-60 mix-blend-luminosity hover:mix-blend-normal hover:scale-110 transition-all duration-[3s] ease-out"
+              />
+            </motion.div>
+
+            <div className={`flex flex-col justify-center px-10 py-20 sm:px-20 ${i % 2 === 0 ? "md:order-1" : "md:order-2"}`}>
+              <motion.div
+                initial={{ opacity: 0, x: i % 2 === 0 ? 60 : -60, rotateX: 15 }}
+                whileInView={{ opacity: 1, x: 0, rotateX: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 1.5, ease: "easeOut", delay: 0.1 }}
               >
-                Join a Classroom →
+                <div className="text-xs uppercase tracking-[0.3em] font-medium text-[#888888] mb-4">{band}</div>
+                <h3 className="text-3xl sm:text-5xl font-display text-[#F0F0F0] mb-8">{label}</h3>
+                <p className="text-lg text-[#C0C0C0] font-light leading-relaxed mb-12 max-w-xl">{desc}</p>
+                <div className="flex flex-col gap-4">
+                  <span className="text-xs uppercase tracking-[0.2em] text-[#888888]">Curriculum Targets</span>
+                  <ul className="space-y-3">
+                    {missions.map((m) => (
+                      <li key={m} className="flex items-center gap-4 text-[#F0F0F0] text-sm">
+                        <div className="w-1 h-1 rounded-full bg-[#D4AF37]" />
+                        {m}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      {/* ── Terminal CTA ─────────────────────────────────────────────────── */}
+      <section className="relative z-30 px-6 py-40 border-t border-white/10 bg-[#000000]">
+        <motion.div
+          initial={{ opacity: 0, y: 50, scale: 0.9, rotateX: -10 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.4, type: "spring", bounce: 0.3 }}
+          className="max-w-4xl mx-auto text-center"
+        >
+          <h2 className="font-display text-4xl sm:text-6xl mb-8 text-[#F0F0F0] tracking-tight">
+            Ready to Start?
+          </h2>
+          <p className="mb-14 text-xl text-[#888888] font-light max-w-2xl mx-auto leading-relaxed">
+            Deploy interactive financial simulations entirely within the browser.
+            No installation or complex setup required.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <Link href="/join">
+              <button className="px-10 py-5 bg-[#F0F0F0] text-[#010101] text-lg font-semibold min-w-[240px] rounded-sm hover:bg-white transition-all">
+                Student Login
               </button>
             </Link>
-            <Link href="/sign-in">
-              <Button size="lg" variant="secondary" className="w-full sm:w-auto">
-                Teacher Login
-              </Button>
+            <Link href="/sign-in" className="hidden sm:block">
+              <button className="px-10 py-5 border border-white/20 text-[#F0F0F0] text-lg font-semibold min-w-[240px] rounded-sm hover:bg-white/10 transition-all">
+                Teacher Sign In
+              </button>
             </Link>
           </div>
         </motion.div>
       </section>
-    </main>
+    </div>
   );
 }

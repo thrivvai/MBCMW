@@ -1,12 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { StarField } from "@/components/ui/StarField";
-import { CosmicBackground } from "@/components/ui/CosmicBackground";
 import { useStudentStore } from "@/stores/student-store";
 import type { JoinSessionResponse } from "@/lib/types";
 
@@ -18,11 +17,11 @@ export default function JoinPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  if (typeof window !== "undefined") {
+  useEffect(() => {
     const url = new URL(window.location.href);
     const qCode = url.searchParams.get("code");
     if (qCode && !code) setCode(qCode.toUpperCase());
-  }
+  }, [code]);
 
   const handleJoin = async () => {
     setError("");
@@ -60,95 +59,79 @@ export default function JoinPage() {
   };
 
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden"
-      style={{ background: "#030507" }}
-    >
-      <StarField count={80} />
-      <CosmicBackground />
+    <div className="min-h-screen w-full flex flex-col items-center justify-center p-6 relative overflow-hidden bg-[#010101]">
 
-      {/* Portal ring — decorative orbit around the form */}
-      <div
-        className="absolute w-[600px] h-[600px] rounded-full pointer-events-none"
-        style={{
-          border: "1px solid rgba(139,92,246,0.08)",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          animation: "orbitSlow 60s linear infinite",
-        }}
-        aria-hidden="true"
-      />
-      <div
-        className="absolute w-[420px] h-[420px] rounded-full pointer-events-none"
-        style={{
-          border: "1px solid rgba(0,204,216,0.06)",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          animation: "orbitSlow 40s linear infinite reverse",
-        }}
-        aria-hidden="true"
-      />
+      {/* Photorealistic space background */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop"
+          alt=""
+          className="w-full h-full object-cover object-center opacity-30 mix-blend-luminosity"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#010101] via-[#010101]/40 to-[#010101]/80" />
+      </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 30, scale: 0.97 }}
+        initial={{ opacity: 0, y: 50, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-10 max-w-md w-full space-y-8"
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-10 max-w-md w-full space-y-10"
       >
-        {/* Branding */}
         <div className="text-center">
-          <div
-            className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 text-4xl"
-            style={{
-              background: "radial-gradient(circle, rgba(232,168,32,0.15) 0%, rgba(139,92,246,0.08) 100%)",
-              border: "1px solid rgba(232,168,32,0.20)",
-              boxShadow: "0 0 40px rgba(232,168,32,0.10), inset 0 0 20px rgba(232,168,32,0.05)",
-            }}
+          <motion.div
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", damping: 15, delay: 0.2 }}
+            className="inline-flex items-center justify-center w-20 h-20 mb-8 border border-[#D4AF37]/30 bg-black/40"
           >
-            🏙️
-          </div>
-          <h1
-            className="font-display font-extrabold text-4xl mb-2"
-            style={{ color: "#E8E4D8" }}
+            <div className="w-10 h-10 border border-[#F0F0F0]/50 transform rotate-45" />
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 30, rotateX: 20 }}
+            animate={{ opacity: 1, y: 0, rotateX: 0 }}
+            transition={{ delay: 0.4, duration: 1 }}
+            className="font-display font-medium text-4xl sm:text-5xl mb-3 tracking-tight text-[#F0F0F0]"
           >
-            MathWorld City
-          </h1>
-          <p style={{ color: "#5A5A6E", fontWeight: 300 }}>
-            Enter your class code to join today&apos;s session
-          </p>
+            Student Login
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="text-[#888888] text-sm font-light tracking-widest uppercase"
+          >
+            Enter your class session
+          </motion.p>
         </div>
 
-        {/* Form card */}
-        <div
-          className="rounded-2xl p-8 space-y-5"
-          style={{
-            background: "rgba(13,16,32,0.80)",
-            border: "1px solid rgba(255,255,255,0.07)",
-            backdropFilter: "blur(20px)",
-            boxShadow: "0 0 60px rgba(139,92,246,0.05), 0 24px 48px rgba(0,0,0,0.4)",
-          }}
+        <motion.div
+          initial={{ opacity: 0, y: 30, rotateX: -10 }}
+          animate={{ opacity: 1, y: 0, rotateX: 0 }}
+          transition={{ delay: 0.6, duration: 1 }}
+          className="p-8 sm:p-12 space-y-6 relative rounded-sm glass"
+          style={{ perspective: 1000 }}
         >
           <Input
             id="join-code"
             label="Class Code"
-            placeholder="e.g. MATH42"
+            placeholder="e.g. RE-774"
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
             maxLength={6}
-            className="text-center text-2xl tracking-[0.3em] font-bold uppercase"
+            className="text-center text-2xl tracking-[0.4em] font-medium uppercase bg-[#020202] text-[#F0F0F0] h-16 border-white/10"
             autoCapitalize="characters"
             autoComplete="off"
           />
 
           <Input
             id="nickname"
-            label="Your Nickname"
-            placeholder="e.g. MathWizard99"
+            label="Nickname"
+            placeholder="e.g. Researcher_01"
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
             maxLength={30}
+            className="bg-[#020202] h-14 text-lg border-white/10 text-[#F0F0F0]"
             onKeyDown={(e) => e.key === "Enter" && handleJoin()}
           />
 
@@ -156,34 +139,30 @@ export default function JoinPage() {
             <motion.p
               initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-sm text-center"
-              style={{ color: "#F87171" }}
+              className="text-sm text-center font-medium px-4 py-3 bg-[#1A1010] text-[#D45555] rounded-sm border border-[#D45555]/30"
             >
               {error}
             </motion.p>
           )}
 
-          <button
+          <Button
             onClick={handleJoin}
             disabled={loading}
-            className="w-full py-4 rounded-xl font-semibold text-base transition-all duration-200 hover:brightness-110 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
-            style={{
-              background: "linear-gradient(135deg, #E8A820, #F5C040 50%, #00CCD8)",
-              color: "#030507",
-              boxShadow: "0 0 40px rgba(232,168,32,0.20), 0 0 80px rgba(0,204,216,0.08)",
-            }}
+            size="lg"
+            className="w-full mt-4 py-6 bg-[#F0F0F0] text-[#010101] hover:bg-white rounded-sm font-semibold tracking-wide"
           >
-            {loading ? (
-              <span className="inline-block w-5 h-5 border-2 border-[#030507] border-t-transparent rounded-full animate-spin" />
-            ) : (
-              "Enter MathWorld City →"
-            )}
-          </button>
-        </div>
+            {loading ? "Joining..." : "Join Class"}
+          </Button>
+        </motion.div>
 
-        <p className="text-center text-sm" style={{ color: "#2A2A3A" }}>
-          No account needed — your teacher&apos;s class code is all you need.
-        </p>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="text-center text-xs font-light tracking-widest uppercase text-[#555555]"
+        >
+          No account needed · Join code provided by your teacher
+        </motion.p>
       </motion.div>
     </div>
   );
