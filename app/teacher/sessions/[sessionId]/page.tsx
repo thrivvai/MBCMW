@@ -176,7 +176,7 @@ export default function LiveSessionPage() {
         {students.length === 0 ? (
           <div className="px-6 py-12 text-center">
             <p className="text-gray-500">
-              No students yet. Share the join code and they'll appear here as they join.
+              No students yet. Share the join code and they&apos;ll appear here as they join.
             </p>
           </div>
         ) : (

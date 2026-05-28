@@ -65,7 +65,7 @@ export default function NewSessionPage() {
       <div>
         <h1 className="text-2xl font-black text-white">New Classroom Session</h1>
         <p className="text-gray-400 text-sm mt-1">
-          Set up a session and you'll get a 6-letter code your students can use to join.
+          Set up a session and you&apos;ll get a 6-letter code your students can use to join.
         </p>
       </div>
 

@@ -70,7 +70,7 @@ export default function JoinPage() {
         <div className="text-center">
           <div className="inline-block text-5xl mb-4">🏙️</div>
           <h1 className="text-3xl font-black text-white">MathWorld Classroom</h1>
-          <p className="text-gray-400 mt-2">Enter your class code to join today's session</p>
+          <p className="text-gray-400 mt-2">Enter your class code to join today&apos;s session</p>
         </div>
 
         <div className="bg-city-card border border-city-border rounded-2xl p-8 space-y-5">
@@ -117,7 +117,7 @@ export default function JoinPage() {
         </div>
 
         <p className="text-center text-sm text-gray-500">
-          No account needed — your teacher's class code is all you need.
+          No account needed — your teacher&apos;s class code is all you need.
         </p>
       </motion.div>
     </div>

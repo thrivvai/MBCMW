@@ -42,7 +42,7 @@ export function DecisionStep({ decision, onDecide, onNext }: Props) {
         <div className="text-center">
           <span className="text-4xl mb-4 block">🤔</span>
           <h2 className="text-2xl font-bold text-white mb-2">Financial Decision Point</h2>
-          <p className="text-gray-400 text-sm">There's no single right answer — your choice matters.</p>
+          <p className="text-gray-400 text-sm">There&apos;s no single right answer — your choice matters.</p>
         </div>
 
         <div className="bg-city-card border border-city-border rounded-2xl p-6">
