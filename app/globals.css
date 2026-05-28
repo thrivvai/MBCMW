@@ -22,7 +22,48 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Reduced motion: disable all animations for accessibility */
+/* ─── Custom keyframes ────────────────────────────────────────────────────── */
+@keyframes starPulse {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50%       { opacity: 0.9;  transform: scale(1.4); }
+}
+
+@keyframes floatA {
+  0%, 100% { transform: translateY(0px)   rotate(0deg); }
+  50%       { transform: translateY(-18px) rotate(6deg); }
+}
+
+@keyframes floatB {
+  0%, 100% { transform: translateY(0px)  rotate(0deg); }
+  50%       { transform: translateY(14px) rotate(-4deg); }
+}
+
+@keyframes floatC {
+  0%, 100% { transform: translateY(-8px) rotate(0deg); }
+  50%       { transform: translateY(8px)  rotate(8deg); }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0%   50%; }
+  50%       { background-position: 100% 50%; }
+}
+
+@keyframes neonPulse {
+  0%, 100% { box-shadow: 0 0 8px currentColor, 0 0 24px currentColor; }
+  50%       { box-shadow: 0 0 18px currentColor, 0 0 50px currentColor; }
+}
+
+@keyframes scoreCount {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes particleBurst {
+  0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+
+/* ─── Reduced motion: disable all animations for accessibility ────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
