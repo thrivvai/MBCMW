@@ -1,0 +1,204 @@
+"use client";
+
+import { useEffect, useState, useCallback, useRef } from "react";
+import { useParams } from "next/navigation";
+import { motion } from "framer-motion";
+import { createClient } from "@/lib/supabase/client";
+import { ClassMetricsBar } from "@/components/teacher/ClassMetricsBar";
+import { StudentRow } from "@/components/teacher/StudentRow";
+import { JoinCodeDisplay } from "@/components/teacher/JoinCodeDisplay";
+import { Button } from "@/components/ui/button";
+import type { StudentProgressSummary, ClassMetrics } from "@/lib/types";
+
+interface SessionInfo {
+  id: string;
+  joinCode: string;
+  gradeBand: string;
+  status: string;
+}
+
+export default function LiveSessionPage() {
+  const { sessionId } = useParams() as { sessionId: string };
+  const [session, setSession] = useState<SessionInfo | null>(null);
+  const [students, setStudents] = useState<StudentProgressSummary[]>([]);
+  const [metrics, setMetrics] = useState<ClassMetrics>({
+    studentsJoined: 0,
+    missionsCompleted: 0,
+    averageScore: 0,
+    averageTimeMinutes: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [ending, setEnding] = useState(false);
+  const channelRef = useRef<ReturnType<ReturnType<typeof createClient>["channel"]> | null>(null);
+
+  const fetchProgress = useCallback(async () => {
+    const res = await fetch(`/api/sessions/${sessionId}/students`);
+    if (!res.ok) return;
+    const data = await res.json();
+    setSession(data.session);
+    setStudents(data.students);
+    setMetrics(data.metrics);
+    setLoading(false);
+  }, [sessionId]);
+
+  // Initial load.
+  useEffect(() => {
+    fetchProgress();
+  }, [fetchProgress]);
+
+  // Supabase Realtime — re-fetch whenever student_profiles or mission_attempts change in this session.
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase
+      .channel(`session-live-${sessionId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "student_profiles",
+          filter: `session_id=eq.${sessionId}`,
+        },
+        () => fetchProgress()
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "mission_attempts",
+          filter: `session_id=eq.${sessionId}`,
+        },
+        () => fetchProgress()
+      )
+      .subscribe();
+
+    channelRef.current = channel;
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [sessionId, fetchProgress]);
+
+  const handleEndSession = async () => {
+    if (!confirm("End this session? Students will no longer be able to join.")) return;
+    setEnding(true);
+    // Service-side endpoint to mark session ended.
+    await fetch(`/api/sessions/${sessionId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "ended" }),
+    });
+    fetchProgress();
+    setEnding(false);
+  };
+
+  const handleExportCSV = () => {
+    const rows = [
+      ["Nickname", "Missions Completed", "Total Missions", "Total Score", "Last Active"],
+      ...students.map((s) => [
+        s.nickname,
+        s.missionsCompleted,
+        s.totalMissions,
+        s.totalScore,
+        s.lastActive ?? "",
+      ]),
+    ];
+    const csv = rows.map((r) => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `session-${session?.joinCode ?? sessionId}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const appUrl =
+    typeof window !== "undefined" ? window.location.origin : process.env.NEXT_PUBLIC_APP_URL ?? "";
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-black text-white">Live Session</h1>
+          <p className="text-gray-400 text-sm mt-1">
+            Grade {session?.gradeBand} ·{" "}
+            <span
+              className={session?.status === "active" ? "text-emerald-400" : "text-gray-400"}
+            >
+              {session?.status === "active" ? "● Active" : "Ended"}
+            </span>
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="secondary" size="sm" onClick={handleExportCSV}>
+            Export CSV
+          </Button>
+          {session?.status === "active" && (
+            <Button variant="danger" size="sm" onClick={handleEndSession} loading={ending}>
+              End Session
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Join code display */}
+      {session && session.status === "active" && (
+        <JoinCodeDisplay code={session.joinCode} appUrl={appUrl} />
+      )}
+
+      {/* Metrics */}
+      <ClassMetricsBar metrics={metrics} />
+
+      {/* Student table */}
+      <div className="bg-city-card border border-city-border rounded-2xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-city-border flex items-center justify-between">
+          <p className="text-sm font-semibold text-gray-300">
+            Students ({students.length})
+          </p>
+          <button
+            onClick={fetchProgress}
+            className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+          >
+            ↻ Refresh
+          </button>
+        </div>
+
+        {students.length === 0 ? (
+          <div className="px-6 py-12 text-center">
+            <p className="text-gray-500">
+              No students yet. Share the join code and they'll appear here as they join.
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-city-border text-xs text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left">Student</th>
+                  <th className="px-4 py-3 text-left">Status</th>
+                  <th className="px-4 py-3 text-left">Progress</th>
+                  <th className="px-4 py-3 text-right">Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {students.map((s) => (
+                  <StudentRow key={s.studentId} student={s} />
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,93 @@
+{
+  "id": "class-party-budget",
+  "title": "Class Party Budget",
+  "gradeBand": "4-5",
+  "district": "budget-borough",
+  "theme": "Budgeting",
+  "mathFocus": "Addition, subtraction, multiplication, price comparison",
+  "estimatedMinutes": 15,
+  "scenario": {
+    "setup": "Your class is planning an end-of-year party and needs snacks for 20 students. Your teacher has given you $40 to spend — and put YOU in charge of shopping!",
+    "conflict": "Prices vary between stores, and you need enough food for everyone. Every dollar counts. Spend too much and you're over budget. Spend too little and students go hungry.",
+    "objective": "Plan the perfect snack table for 20 students without going over $40"
+  },
+  "learningObjective": "Compare prices, calculate totals using multiplication and addition, and make budgeting decisions with limited funds",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple_choice",
+      "text": "You need juice boxes for all 20 students — one each. Store A sells a 10-pack for $4.50. Store B sells a 10-pack for $3.80. How much do you save in total by choosing Store B?",
+      "options": ["$0.70", "$1.40", "$2.80", "$3.50"],
+      "correct": "$1.40",
+      "hint": "You need 2 packs (10 + 10 = 20 students). Find the price difference per pack, then multiply by 2.",
+      "explanation": "You need 2 packs. Store A: 2 × $4.50 = $9.00. Store B: 2 × $3.80 = $7.60. Savings: $9.00 − $7.60 = $1.40.",
+      "points": 10
+    },
+    {
+      "id": "q2",
+      "type": "numeric",
+      "text": "You bought 2 packs of juice boxes at $3.80 each, and 3 bags of chips at $2.50 each. What is your total so far?",
+      "correctNumeric": 15.10,
+      "acceptableRange": [15.05, 15.15],
+      "hint": "Calculate each item separately first: (2 × $3.80) and (3 × $2.50). Then add them together.",
+      "explanation": "Juice boxes: 2 × $3.80 = $7.60. Chips: 3 × $2.50 = $7.50. Total: $7.60 + $7.50 = $15.10.",
+      "points": 10
+    },
+    {
+      "id": "q3",
+      "type": "multiple_choice",
+      "text": "Your current total is $15.10. You want to add a fruit platter for $12.75. Your budget is $40. How much money will you have left after buying the fruit platter?",
+      "options": ["$10.40", "$12.15", "$14.65", "$24.90"],
+      "correct": "$12.15",
+      "hint": "Subtract both amounts from $40. First find your new total: $15.10 + $12.75, then subtract from $40.",
+      "explanation": "New total: $15.10 + $12.75 = $27.85. Remaining: $40.00 − $27.85 = $12.15.",
+      "points": 10
+    },
+    {
+      "id": "q4",
+      "type": "multiple_choice",
+      "text": "For dessert you have two choices: a box of 24 chocolate chip cookies for $6.00, or individual cookies at $0.35 each. You need 20 cookies. Which is cheaper, and by how much?",
+      "options": [
+        "The box is cheaper by $1.00",
+        "The box is cheaper by $2.40",
+        "Individual cookies are cheaper by $1.00",
+        "They cost exactly the same"
+      ],
+      "correct": "The box is cheaper by $1.00",
+      "hint": "Calculate the cost of 20 individual cookies (20 × $0.35) and compare to the box price of $6.00.",
+      "explanation": "20 individual cookies: 20 × $0.35 = $7.00. One box of 24: $6.00 (with 4 extra cookies!). Box saves: $7.00 − $6.00 = $1.00.",
+      "points": 10
+    }
+  ],
+  "decision": {
+    "prompt": "You bought juice boxes, chips, a fruit platter, and a cookie box. Your total is $33.85, and you have $6.15 left. What do you do with the remaining budget?",
+    "options": [
+      {
+        "id": "save",
+        "text": "Save it for the next class event",
+        "outcome": "Great financial thinking! Setting aside leftover funds shows discipline and helps your class plan ahead for future events."
+      },
+      {
+        "id": "spend",
+        "text": "Buy extra treats to surprise the class",
+        "outcome": "You made everyone happy! Sometimes spending to create joy for others is a great use of extra funds — especially when you stayed under budget."
+      },
+      {
+        "id": "return",
+        "text": "Return it to the teacher",
+        "outcome": "Responsible and honest! Returning unused funds shows integrity and gives your teacher flexibility for other class needs."
+      }
+    ],
+    "points": 15
+  },
+  "reflection": {
+    "prompt": "What was the hardest part of staying under your $40 budget? If you had to do this shopping trip again, what would you do differently?",
+    "points": 10
+  },
+  "badge": {
+    "id": "budget-boss",
+    "name": "Budget Boss",
+    "description": "Planned a class party snack table under $40"
+  },
+  "completionBonus": 25
+}
