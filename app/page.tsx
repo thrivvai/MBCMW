@@ -8,34 +8,34 @@ import { motion, useScroll, useTransform } from "framer-motion";
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 const HOW_IT_WORKS = [
-  { step: "01", title: "Create a Session",  desc: "Teachers select a grade band and instantly generate a secure 6-letter join code." },
-  { step: "02", title: "Students Join",      desc: "No logins required. Students enter the code and a nickname for instant access." },
-  { step: "03", title: "Immersive Missions", desc: "Students interact with real-world financial scenarios through an engaging spatial interface." },
-  { step: "04", title: "Live Dashboard",     desc: "Teachers monitor class progression and student performance in real-time." },
+  { step: "01", title: "Create a Session",  desc: "Pick a grade level and get a 6-letter code your class can use to join instantly." },
+  { step: "02", title: "Students Jump In",   desc: "No accounts needed. Students enter the code and a nickname — they're in." },
+  { step: "03", title: "Play Real Missions", desc: "Students tackle real money problems through an immersive, game-like experience." },
+  { step: "04", title: "Watch Live",          desc: "See every student's progress and score update in real time as they work." },
 ];
 
 const GRADE_BANDS = [
   {
-    band: "Foundations",
-    label: "Fundamental Economics",
-    desc: "Simulate pricing variables, core supply constraints, and foundational budget modeling across classroom scenarios.",
-    missions: ["Class Resource Audit", "Lunch Protocol", "Savings Trajectory"],
+    band: "Grades 4–5",
+    label: "Money Foundations",
+    desc: "Budgets, spending choices, and saving basics in everyday situations students already know.",
+    missions: ["Class Resource Audit", "Lunch Budget", "Savings Goal"],
     image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070&auto=format&fit=crop",
     imageAlt: "Star-filled night sky over mountain meadow",
   },
   {
-    band: "Intermediate",
-    label: "Applied Variable Mathematics",
-    desc: "Calculate compound vectors, simulate taxation layers, and model localized profit margins in dynamic market conditions.",
-    missions: ["Market Distribution", "Mobile Vendor Logistics", "Subscription Deficits"],
+    band: "Grades 6–8",
+    label: "Real-World Math",
+    desc: "Percentages, taxes, profit and loss — applied to situations that actually happen in life.",
+    missions: ["Market Day", "Mobile Business", "Monthly Bills"],
     image: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2048&auto=format&fit=crop",
     imageAlt: "Spiral galaxy photographed from deep space",
   },
   {
-    band: "Advanced",
-    label: "Financial Architecture",
-    desc: "Evaluate multi-tier credit structures, systemic risk strategies, and macro-market investment models.",
-    missions: ["Labor Compensation", "Credit Vulnerability", "Enterprise Pitch"],
+    band: "Grades 9–12",
+    label: "Financial Strategy",
+    desc: "Credit, investing, income decisions, and the big choices that shape financial futures.",
+    missions: ["Paycheck Reality", "Credit Risk", "Startup Pitch"],
     image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2070&auto=format&fit=crop",
     imageAlt: "Nebula and star formation photographed by space telescope",
   },
@@ -50,27 +50,24 @@ export default function Home() {
   return (
     <div className="relative min-h-[100dvh] w-full bg-[#0B0C0F]">
 
-      {/* ── Hero — Asymmetric, left-anchored ─────────────────────────────── */}
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section
         ref={heroRef}
         className="relative min-h-[100dvh] flex flex-col overflow-hidden"
       >
-        {/* Background: space photograph with directional gradient mask */}
         <div className="absolute inset-0 z-0">
           <img
             src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop"
             alt="Earth from orbit in deep space"
             className="w-full h-full object-cover object-center opacity-55 mix-blend-luminosity"
           />
-          {/* Directional gradient — dense left, fading right */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#0B0C0F] via-[#0B0C0F]/70 to-transparent" />
-          {/* Top/bottom fade */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#0B0C0F]/40 via-transparent to-[#0B0C0F]" />
         </div>
 
-        {/* Nav strip */}
+        {/* Nav */}
         <div className="relative z-20 flex justify-between items-center px-8 sm:px-16 pt-10">
-          <span className="font-display font-[500] text-[#EDE8DC] text-lg tracking-tight">
+          <span className="font-display font-[600] text-[#EDE8DC] text-lg tracking-tight">
             MathWorld
           </span>
           <Link href="/sign-in">
@@ -83,7 +80,7 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* Hero copy — left-aligned, bottom of viewport */}
+        {/* Hero copy */}
         <motion.div
           style={{ y: heroY, opacity: heroOpacity }}
           className="relative z-10 flex flex-col justify-end flex-1 px-8 sm:px-16 pb-20 sm:pb-28"
@@ -97,7 +94,7 @@ export default function Home() {
             >
               <div className="h-px w-8 bg-[#C9A84C]" />
               <span className="text-xs font-medium tracking-[0.25em] uppercase text-[#9A9694]">
-                Research Platform
+                K–12 Financial Math
               </span>
             </motion.div>
 
@@ -108,10 +105,10 @@ export default function Home() {
               className="font-display leading-[0.92] tracking-tight text-[#EDE8DC] mb-8"
               style={{ fontSize: "clamp(3.5rem, 11vw, 7.5rem)", fontWeight: 700 }}
             >
-              Infinite<br />
-              variables.<br />
+              Math class<br />
+              just got<br />
               <em className="not-italic" style={{ color: "#666360" }}>
-                One terminal.
+                interesting.
               </em>
             </motion.h1>
 
@@ -121,8 +118,8 @@ export default function Home() {
               transition={{ delay: 0.2, duration: 0.6, ease: EASE_OUT_EXPO }}
               className="text-lg leading-relaxed text-[#9A9694] font-light max-w-sm mb-12"
             >
-              A high-fidelity spatial financial simulator engineered for precision
-              instruction and systemic problem solving.
+              Real money problems. Real math skills.
+              No boring worksheets.
             </motion.p>
 
             <motion.div
@@ -136,7 +133,7 @@ export default function Home() {
                   className="px-8 py-4 bg-[#EDE8DC] text-[#0B0C0F] text-base font-semibold rounded-sm hover:bg-white active:scale-[0.97] transition-all duration-150 cursor-pointer"
                   style={{ minWidth: "180px", minHeight: "52px" }}
                 >
-                  Student Login
+                  I&apos;m a Student
                 </button>
               </Link>
               <Link href="/sign-in" className="cursor-pointer">
@@ -144,14 +141,14 @@ export default function Home() {
                   className="px-8 py-4 border border-white/12 text-[#EDE8DC] text-base font-medium rounded-sm hover:bg-white/5 hover:border-white/20 active:scale-[0.97] transition-all duration-150 cursor-pointer"
                   style={{ minWidth: "180px", minHeight: "52px" }}
                 >
-                  Teacher Sign In
+                  I&apos;m a Teacher
                 </button>
               </Link>
             </motion.div>
           </div>
         </motion.div>
 
-        {/* Scroll indicator — animated light, no text */}
+        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -168,10 +165,9 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* ── How It Works — Editorial list, not equal-card grid ───────────── */}
+      {/* ── How It Works ─────────────────────────────────────────────────── */}
       <section className="relative z-10 px-8 sm:px-16 pt-36 pb-32 bg-[#0B0C0F]">
         <div className="max-w-5xl mx-auto">
-
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -220,7 +216,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Grade Bands — Alternating image/text ─────────────────────────── */}
+      {/* ── Grade Bands ───────────────────────────────────────────────────── */}
       <section className="relative bg-[#0B0C0F]">
         {GRADE_BANDS.map(({ band, label, desc, missions, image, imageAlt }, i) => (
           <div
@@ -266,7 +262,7 @@ export default function Home() {
                 </p>
                 <div className="space-y-1">
                   <span className="text-xs uppercase tracking-[0.2em] text-[#3A3836] block mb-3">
-                    Curriculum targets
+                    Sample missions
                   </span>
                   <ul className="space-y-2.5">
                     {missions.map((m) => (
@@ -283,7 +279,7 @@ export default function Home() {
         ))}
       </section>
 
-      {/* ── CTA — Asymmetric, left-anchored ──────────────────────────────── */}
+      {/* ── CTA ──────────────────────────────────────────────────────────── */}
       <section className="relative z-10 px-8 sm:px-16 py-40 border-t border-white/8 bg-[#0B0C0F]">
         <div className="max-w-5xl mx-auto">
           <motion.div
@@ -302,10 +298,11 @@ export default function Home() {
               className="font-display text-[#EDE8DC] tracking-tight leading-tight mb-8 max-w-2xl"
               style={{ fontSize: "clamp(2.5rem, 7vw, 5rem)", fontWeight: 700 }}
             >
-              Deploy your first mission in under a minute.
+              Start a class in under a minute.
             </h2>
             <p className="text-lg text-[#666360] font-light max-w-md leading-relaxed mb-12">
-              No installation. No accounts for students. Just a code and a classroom.
+              No downloads. No student accounts.
+              Just share a code and go.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/join" className="cursor-pointer">
@@ -313,7 +310,7 @@ export default function Home() {
                   className="px-8 py-4 bg-[#EDE8DC] text-[#0B0C0F] text-base font-semibold rounded-sm hover:bg-white active:scale-[0.97] transition-all duration-150 cursor-pointer"
                   style={{ minWidth: "200px", minHeight: "52px" }}
                 >
-                  Student Login
+                  I&apos;m a Student
                 </button>
               </Link>
               <Link href="/sign-in" className="cursor-pointer">
@@ -321,7 +318,7 @@ export default function Home() {
                   className="px-8 py-4 border border-white/12 text-[#EDE8DC] text-base font-medium rounded-sm hover:bg-white/5 hover:border-white/20 active:scale-[0.97] transition-all duration-150 cursor-pointer"
                   style={{ minWidth: "200px", minHeight: "52px" }}
                 >
-                  Teacher Sign In
+                  I&apos;m a Teacher
                 </button>
               </Link>
             </div>
@@ -329,11 +326,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-white/7 px-8 sm:px-16 py-8">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <span className="font-display text-[#3A3836] text-sm font-[400]">MathWorld Classroom</span>
-          <span className="text-xs text-[#3A3836] tracking-wide">Gamified financial math for K–12</span>
+          <span className="text-xs text-[#3A3836] tracking-wide">Financial math learning for K–12</span>
         </div>
       </footer>
     </div>

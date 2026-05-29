@@ -119,7 +119,7 @@ export default function LiveSessionPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-24">
-        <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[#C9A84C]/40 border-t-[#C9A84C] rounded-full animate-spin" />
       </div>
     );
   }
@@ -129,13 +129,13 @@ export default function LiveSessionPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-black text-white">Live Session</h1>
-          <p className="text-gray-400 text-sm mt-1">
+          <h1 className="font-display text-2xl text-[#EDE8DC] font-[600] tracking-tight">
+            Live Session
+          </h1>
+          <p className="text-[#666360] text-sm mt-1 font-light">
             Grade {session?.gradeBand} ·{" "}
-            <span
-              className={session?.status === "active" ? "text-emerald-400" : "text-gray-400"}
-            >
-              {session?.status === "active" ? "● Active" : "Ended"}
+            <span className={session?.status === "active" ? "text-[#6AC98A]" : "text-[#666360]"}>
+              {session?.status === "active" ? "Active" : "Ended"}
             </span>
           </p>
         </div>
@@ -160,22 +160,26 @@ export default function LiveSessionPage() {
       <ClassMetricsBar metrics={metrics} />
 
       {/* Student table */}
-      <div className="bg-space-surface border border-space-border rounded-2xl overflow-hidden">
+      <div
+        className="rounded-sm overflow-hidden"
+        style={{ background: "rgba(17,19,24,0.80)", border: "1px solid rgba(255,255,255,0.08)" }}
+      >
         <div className="px-6 py-4 border-b border-space-border flex items-center justify-between">
-          <p className="text-sm font-semibold text-gray-300">
-            Students ({students.length})
+          <p className="text-sm font-semibold text-[#EDE8DC]">
+            Students <span className="text-[#666360] font-light">({students.length})</span>
           </p>
           <button
             onClick={fetchProgress}
-            className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+            className="text-xs text-[#3A3836] hover:text-[#9A9694] transition-colors duration-200 cursor-pointer"
+            style={{ minHeight: "32px", minWidth: "32px" }}
           >
             ↻ Refresh
           </button>
         </div>
 
         {students.length === 0 ? (
-          <div className="px-6 py-12 text-center">
-            <p className="text-gray-500">
+          <div className="px-6 py-14 text-center">
+            <p className="text-[#666360] font-light text-sm">
               No students yet. Share the join code and they&apos;ll appear here as they join.
             </p>
           </div>
@@ -183,11 +187,11 @@ export default function LiveSessionPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-space-border text-xs text-gray-500 uppercase tracking-wider">
-                  <th className="px-4 py-3 text-left">Student</th>
-                  <th className="px-4 py-3 text-left">Status</th>
-                  <th className="px-4 py-3 text-left">Progress</th>
-                  <th className="px-4 py-3 text-right">Score</th>
+                <tr className="border-b border-space-border text-[10px] text-[#3A3836] uppercase tracking-[0.15em]">
+                  <th className="px-4 py-3 text-left font-semibold">Student</th>
+                  <th className="px-4 py-3 text-left font-semibold">Status</th>
+                  <th className="px-4 py-3 text-left font-semibold">Progress</th>
+                  <th className="px-4 py-3 text-right font-semibold">Score</th>
                 </tr>
               </thead>
               <tbody>

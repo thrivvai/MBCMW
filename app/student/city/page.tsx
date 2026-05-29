@@ -3,9 +3,11 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useStudentStore } from "@/stores/student-store";
 import { DISTRICT_CONFIG, getMissionsForGradeBand } from "@/lib/utils";
 import { TiltCard } from "@/components/ui/TiltCard";
+import type { LeaderboardEntry } from "@/app/api/sessions/[sessionId]/leaderboard/route";
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
@@ -98,8 +100,115 @@ function LockIcon({ size = 14 }: { size?: number }) {
   );
 }
 
+/* ── Leaderboard ─────────────────────────────────────────────────────────── */
+
+function TrophyIcon({ rank }: { rank: number }) {
+  if (rank === 1) return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-label="1st place">
+      <path d="M8 2L9.2 5.5H13L10.2 7.6L11.2 11L8 9L4.8 11L5.8 7.6L3 5.5H6.8L8 2Z"
+            fill="#C9A84C" />
+    </svg>
+  );
+  if (rank === 2) return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-label="2nd place">
+      <path d="M8 2L9.2 5.5H13L10.2 7.6L11.2 11L8 9L4.8 11L5.8 7.6L3 5.5H6.8L8 2Z"
+            fill="#9A9694" />
+    </svg>
+  );
+  if (rank === 3) return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-label="3rd place">
+      <path d="M8 2L9.2 5.5H13L10.2 7.6L11.2 11L8 9L4.8 11L5.8 7.6L3 5.5H6.8L8 2Z"
+            fill="#7A6028" />
+    </svg>
+  );
+  return <span className="text-xs font-medium text-[#3A3836] tabular-nums w-4 text-center">{rank}</span>;
+}
+
+function Leaderboard({ sessionId, currentStudentId }: { sessionId: string; currentStudentId: string }) {
+  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!sessionId) return;
+    const load = async () => {
+      try {
+        const res = await fetch(`/api/sessions/${sessionId}/leaderboard`);
+        if (res.ok) {
+          const data = await res.json();
+          setEntries(data.entries ?? []);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+    // Refresh every 30 seconds
+    const id = setInterval(load, 30_000);
+    return () => clearInterval(id);
+  }, [sessionId]);
+
+  if (loading || entries.length === 0) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.5, duration: 0.5, ease: EASE_OUT_EXPO }}
+      className="w-full max-w-6xl pb-16"
+    >
+      <div className="flex items-center gap-3 mb-5">
+        <div className="h-px w-6 bg-[#C9A84C]" />
+        <span className="text-xs font-medium tracking-[0.25em] uppercase text-[#9A9694]">
+          Class Leaderboard
+        </span>
+      </div>
+
+      <div
+        className="rounded-sm overflow-hidden"
+        style={{ background: "rgba(17,19,24,0.70)", border: "1px solid rgba(255,255,255,0.07)" }}
+      >
+        {entries.slice(0, 10).map((entry, i) => {
+          const rank = i + 1;
+          const isMe = entry.studentId === currentStudentId;
+          return (
+            <div
+              key={entry.studentId}
+              className="flex items-center gap-4 px-5 py-3 transition-colors"
+              style={{
+                borderBottom: i < Math.min(entries.length, 10) - 1 ? "1px solid rgba(255,255,255,0.05)" : "none",
+                background: isMe ? "rgba(201,168,76,0.07)" : "transparent",
+              }}
+            >
+              <div className="w-5 flex justify-center shrink-0">
+                <TrophyIcon rank={rank} />
+              </div>
+              <span
+                className="flex-1 text-sm font-medium truncate"
+                style={{ color: isMe ? "#C9A84C" : "#9A9694" }}
+              >
+                {entry.nickname}
+                {isMe && <span className="text-[10px] ml-2 text-[#C9A84C]/60 uppercase tracking-wider">you</span>}
+              </span>
+              <span className="text-xs text-[#666360] font-light tabular-nums">
+                {entry.missionsCompleted}
+                <span className="text-[#3A3836]"> done</span>
+              </span>
+              <span
+                className="text-sm font-semibold tabular-nums min-w-[52px] text-right"
+                style={{ color: isMe ? "#C9A84C" : "#EDE8DC" }}
+              >
+                {entry.totalScore} pts
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
+
 export default function CityPage() {
-  const { nickname, gradeBand, assignedMissions, sessionCode } = useStudentStore();
+  const { nickname, gradeBand, assignedMissions, sessionCode, sessionId, studentId } = useStudentStore();
   const gradeMissions = getMissionsForGradeBand(gradeBand);
 
   return (
@@ -278,6 +387,11 @@ export default function CityPage() {
             })}
           </motion.div>
         </div>
+
+        {/* Leaderboard */}
+        {sessionId && (
+          <Leaderboard sessionId={sessionId} currentStudentId={studentId ?? ""} />
+        )}
       </div>
     </div>
   );

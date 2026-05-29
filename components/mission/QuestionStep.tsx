@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
@@ -73,6 +73,16 @@ export function QuestionStep({
 
   const currentAnswer = question.type === "numeric" ? numericInput : selected;
   const canSubmit = currentAnswer.trim().length > 0;
+
+  // Elapsed timer for current question — counts up so it's informative, not stressful
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    setElapsed(0);
+    const id = setInterval(() => setElapsed((e) => e + 1), 1000);
+    return () => clearInterval(id);
+  }, [questionNumber]);
+  const formatTime = (s: number) =>
+    `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
   const handleSubmit = useCallback(async () => {
     if (!canSubmit || submitting) return;
@@ -157,6 +167,14 @@ export function QuestionStep({
             <span style={{ color: "#3A3836" }}> / {totalQuestions}</span>
           </span>
           <Progress value={progressPct} className="flex-1" />
+          {/* Elapsed timer */}
+          <span
+            className="text-xs shrink-0 tabular-nums font-light"
+            style={{ color: "#3A3836", minWidth: "36px", textAlign: "center" }}
+            aria-label={`Time elapsed: ${formatTime(elapsed)}`}
+          >
+            {formatTime(elapsed)}
+          </span>
           <span className="text-sm font-semibold shrink-0 tabular-nums" style={{ color: "#C9A84C" }}>
             {currentScore} pts
           </span>
