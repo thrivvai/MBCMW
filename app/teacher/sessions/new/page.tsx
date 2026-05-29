@@ -82,7 +82,7 @@ export default function NewSessionPage() {
             className={`w-full text-left px-5 py-4 rounded-xl border-2 transition-all duration-200 ${
               gradeBand === value
                 ? "border-indigo-500 bg-indigo-500/10"
-                : "border-city-border bg-city-card hover:border-indigo-500/40"
+                : "border-space-border bg-space-surface hover:border-indigo-500/40"
             }`}
           >
             <p className="text-white font-semibold">{label}</p>
@@ -105,7 +105,7 @@ export default function NewSessionPage() {
               className={`w-full text-left px-5 py-3 rounded-xl border-2 transition-all duration-200 flex items-center gap-3 ${
                 selectedMissions.includes(m.id)
                   ? "border-indigo-500 bg-indigo-500/10"
-                  : "border-city-border bg-city-card hover:border-indigo-500/40"
+                  : "border-space-border bg-space-surface hover:border-indigo-500/40"
               }`}
             >
               <div

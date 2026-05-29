@@ -7,22 +7,24 @@ import { CosmicBackground } from "@/components/ui/CosmicBackground";
 import type { ScoreBreakdown, Mission } from "@/lib/types";
 import { maxPossibleScore } from "@/lib/scoring/engine";
 
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
+
 interface Props {
   mission: Mission;
   breakdown: ScoreBreakdown;
   badge: Mission["badge"];
 }
 
-// CSS confetti burst from badge center
 function ConfettiBurst() {
-  const particles = Array.from({ length: 28 }, (_, i) => {
-    const angle = (i / 28) * 360;
-    const distance = 70 + (i % 3) * 40;
+  const particles = Array.from({ length: 24 }, (_, i) => {
+    const angle = (i / 24) * 360;
+    const distance = 60 + (i % 3) * 35;
     const tx = Math.cos((angle * Math.PI) / 180) * distance;
     const ty = Math.sin((angle * Math.PI) / 180) * distance;
-    const colors = ["#E8A820", "#F5C040", "#8B5CF6", "#00CCD8", "#C4B5FD", "#67E8F9", "#FDE68A"];
+    // Warm palette — gold tones + warm neutral, no neon
+    const colors = ["#C9A84C", "#F5DFA0", "#E8D080", "#D4C080", "#A8882C", "#EDE8DC", "#9A9694"];
     const color = colors[i % colors.length];
-    const size = 3 + (i % 4);
+    const size = 2.5 + (i % 4);
     const delay = (i % 7) * 0.04;
     return { tx, ty, color, size, delay };
   });
@@ -37,7 +39,6 @@ function ConfettiBurst() {
             width: `${p.size}px`,
             height: `${p.size}px`,
             background: p.color,
-            boxShadow: `0 0 6px ${p.color}`,
             "--tx": `${p.tx}px`,
             "--ty": `${p.ty}px`,
             animation: `particleBurst 0.9s cubic-bezier(0,.9,.57,1) ${p.delay}s both`,
@@ -48,41 +49,51 @@ function ConfettiBurst() {
   );
 }
 
+/* Award medal SVG — replaces 🏅 emoji */
+function MedalIcon({ size = 48 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" aria-label="Mission badge">
+      <circle cx="24" cy="19" r="13" stroke="currentColor" strokeWidth="2" />
+      <path d="M24 8L26.2 14.8H33.6L27.7 18.9L30 25.7L24 21.6L18 25.7L20.3 18.9L14.4 14.8H21.8L24 8Z"
+            stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M17 32L13 46M31 32L35 46M13 46L24 40L35 46"
+            stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function MissionComplete({ mission, breakdown, badge }: Props) {
   const max = maxPossibleScore(mission);
   const pct = Math.round((breakdown.total / max) * 100);
 
   const grade =
-    pct >= 90 ? { label: "Outstanding!", color: "#F5C040", glow: "rgba(245,192,64,0.25)" } :
-    pct >= 70 ? { label: "Great Work!",  color: "#34D399", glow: "rgba(52,211,153,0.20)" } :
-    pct >= 50 ? { label: "Good Effort!", color: "#8B5CF6", glow: "rgba(139,92,246,0.20)" } :
-                { label: "Keep Going!",  color: "#5A5A6E", glow: "transparent" };
+    pct >= 90 ? { label: "Outstanding",  color: "#C9A84C",  border: "rgba(201,168,76,0.25)" } :
+    pct >= 70 ? { label: "Great Work",    color: "#6AC98A",  border: "rgba(106,201,138,0.22)" } :
+    pct >= 50 ? { label: "Good Effort",   color: "#9A9694",  border: "rgba(154,150,148,0.20)" } :
+                { label: "Keep Going",    color: "#666360",  border: "rgba(102,99,96,0.18)" };
 
   const rows = [
-    { label: "Question accuracy", value: breakdown.questionPoints, max: mission.questions.reduce((s, q) => s + q.points, 0) },
-    { label: "Financial decision",  value: breakdown.decisionPoints,    max: mission.decision.points },
-    { label: "Reflection",          value: breakdown.reflectionPoints,  max: mission.reflection.points },
-    { label: "Completion bonus",    value: breakdown.completionBonus,   max: mission.completionBonus },
+    { label: "Question accuracy",  value: breakdown.questionPoints,  max: mission.questions.reduce((s, q) => s + q.points, 0) },
+    { label: "Financial decision",  value: breakdown.decisionPoints,  max: mission.decision.points },
+    { label: "Reflection",          value: breakdown.reflectionPoints, max: mission.reflection.points },
+    { label: "Completion bonus",    value: breakdown.completionBonus,  max: mission.completionBonus },
   ];
 
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden"
-      style={{ background: "#030507" }}
-    >
-      <StarField count={100} />
+    <div className="min-h-[100dvh] flex flex-col items-center justify-center p-6 relative overflow-hidden bg-[#0B0C0F]">
+      <StarField count={80} />
       <CosmicBackground />
 
-      {/* Centered glow */}
+      {/* Centered ambient orb — warm gold, no neon */}
       <div
         className="fixed inset-0 pointer-events-none flex items-center justify-center"
         aria-hidden="true"
       >
         <div
-          className="w-[700px] h-[700px] rounded-full"
+          className="w-[600px] h-[600px] rounded-full"
           style={{
-            background: `radial-gradient(circle, ${grade.glow} 0%, transparent 70%)`,
-            filter: "blur(60px)",
+            background: "radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%)",
+            filter: "blur(80px)",
           }}
         />
       </div>
@@ -90,36 +101,34 @@ export function MissionComplete({ mission, breakdown, badge }: Props) {
       <div className="relative z-10 max-w-lg w-full">
 
         {/* Badge reveal */}
-        <div className="flex flex-col items-center mb-12">
+        <div className="flex flex-col items-center mb-10">
           <div className="relative">
             <ConfettiBurst />
             <motion.div
-              initial={{ scale: 0, rotate: -25 }}
+              initial={{ scale: 0.7, rotate: -15 }}
               animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: "spring", stiffness: 200, damping: 14, delay: 0.1 }}
-              className="w-36 h-36 rounded-full flex items-center justify-center"
+              transition={{ type: "spring", stiffness: 220, damping: 16, delay: 0.1 }}
+              className="w-32 h-32 rounded-sm flex items-center justify-center"
               style={{
-                background: "linear-gradient(135deg, #E8A820, #F5C040 50%, #C8860A)",
-                boxShadow: `0 0 60px rgba(232,168,32,0.40), 0 0 120px rgba(232,168,32,0.15)`,
+                background: "rgba(201,168,76,0.10)",
+                border: "1px solid rgba(201,168,76,0.35)",
+                color: "#C9A84C",
               }}
             >
-              <span className="text-6xl">🏅</span>
+              <MedalIcon size={52} />
             </motion.div>
           </div>
 
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-            className="mt-6 text-center"
+            transition={{ delay: 0.55, duration: 0.45, ease: EASE_OUT_EXPO }}
+            className="mt-5 text-center"
           >
-            <p
-              className="text-xs font-black uppercase tracking-[0.2em] mb-1"
-              style={{ color: "#E8A820" }}
-            >
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] mb-1 text-[#C9A84C]">
               Badge Earned
             </p>
-            <p className="font-display font-extrabold text-2xl" style={{ color: "#E8E4D8" }}>
+            <p className="font-display font-[700] text-xl text-[#EDE8DC]">
               {badge.name}
             </p>
           </motion.div>
@@ -127,93 +136,85 @@ export function MissionComplete({ mission, breakdown, badge }: Props) {
 
         {/* Score + breakdown */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="space-y-5"
+          transition={{ delay: 0.35, duration: 0.55, ease: EASE_OUT_EXPO }}
+          className="space-y-4"
         >
-          <div className="text-center">
-            <p className="text-2xl font-bold mb-2" style={{ color: grade.color }}>
-              {grade.label}
-            </p>
+          {/* Grade + total score */}
+          <div className="text-center mb-2">
             <motion.p
-              className="font-display font-extrabold"
-              style={{ fontSize: "4.5rem", lineHeight: 1, color: "#E8E4D8" }}
-              initial={{ opacity: 0, scale: 0.8 }}
+              className="font-display tracking-tight"
+              style={{ fontSize: "clamp(3.5rem, 10vw, 5rem)", fontWeight: 700, lineHeight: 1, color: "#EDE8DC" }}
+              initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.65, type: "spring", stiffness: 180 }}
+              transition={{ delay: 0.6, type: "spring", stiffness: 200, damping: 18 }}
             >
               {breakdown.total}
-              <span className="text-2xl font-normal" style={{ color: "#2A2A3A" }}> / {max}</span>
+              <span
+                className="font-sans font-light"
+                style={{ fontSize: "1.4rem", color: "#3A3836" }}
+              > / {max}</span>
             </motion.p>
+            <p className="text-sm font-medium mt-1" style={{ color: grade.color }}>{grade.label}</p>
           </div>
 
           {/* Breakdown card */}
           <div
-            className="rounded-2xl overflow-hidden"
+            className="rounded-sm overflow-hidden"
             style={{
-              background: "rgba(13,16,32,0.80)",
-              border: "1px solid rgba(255,255,255,0.07)",
+              background: "rgba(17,19,24,0.85)",
+              border: "1px solid rgba(255,255,255,0.08)",
               backdropFilter: "blur(16px)",
-              boxShadow: "0 24px 48px rgba(0,0,0,0.5)",
             }}
           >
-            <div
-              className="px-6 py-4"
-              style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
-            >
-              <p className="text-sm font-semibold" style={{ color: "#E8E4D8" }}>Score Breakdown</p>
+            <div className="px-6 py-4 border-b border-white/6">
+              <p className="text-sm font-semibold text-[#EDE8DC]">Score Breakdown</p>
             </div>
-            <div style={{ borderColor: "rgba(255,255,255,0.04)" }}>
-              {rows.map(({ label, value, max: rowMax }, i) => (
-                <motion.div
-                  key={label}
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.7 + i * 0.07 }}
-                  className="flex items-center justify-between px-6 py-3.5"
-                  style={{
-                    borderBottom: i < rows.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
-                  }}
-                >
-                  <span className="text-sm" style={{ color: "#5A5A6E" }}>{label}</span>
-                  <div className="flex items-center gap-3">
-                    {/* Mini progress bar */}
-                    <div
-                      className="w-16 h-1 rounded-full overflow-hidden"
-                      style={{ background: "rgba(255,255,255,0.06)" }}
-                    >
-                      <motion.div
-                        className="h-full rounded-full"
-                        style={{
-                          background: value === rowMax
-                            ? "linear-gradient(90deg, #10B981, #34D399)"
-                            : "linear-gradient(90deg, #6D28D9, #8B5CF6)",
-                        }}
-                        initial={{ width: 0 }}
-                        animate={{ width: rowMax > 0 ? `${(value / rowMax) * 100}%` : "0%" }}
-                        transition={{ delay: 0.8 + i * 0.07, duration: 0.6, ease: "easeOut" }}
-                      />
-                    </div>
-                    <span
-                      className="text-sm font-bold min-w-[52px] text-right"
-                      style={{ color: value === rowMax ? "#34D399" : "#E8E4D8" }}
-                    >
-                      {value} / {rowMax}
-                    </span>
+
+            {rows.map(({ label, value, max: rowMax }, i) => (
+              <motion.div
+                key={label}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.65 + i * 0.07, duration: 0.4, ease: EASE_OUT_EXPO }}
+                className="flex items-center justify-between px-6 py-3.5"
+                style={{
+                  borderBottom: i < rows.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none",
+                }}
+              >
+                <span className="text-sm text-[#666360] font-light">{label}</span>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-14 h-0.5 rounded-full overflow-hidden"
+                    style={{ background: "rgba(255,255,255,0.07)" }}
+                  >
+                    <motion.div
+                      className="h-full rounded-full"
+                      style={{
+                        background: value === rowMax ? "#C9A84C" : "rgba(255,255,255,0.25)",
+                      }}
+                      initial={{ width: 0 }}
+                      animate={{ width: rowMax > 0 ? `${(value / rowMax) * 100}%` : "0%" }}
+                      transition={{ delay: 0.75 + i * 0.07, duration: 0.55, ease: EASE_OUT_EXPO }}
+                    />
                   </div>
-                </motion.div>
-              ))}
-            </div>
+                  <span
+                    className="text-sm font-semibold min-w-[50px] text-right tabular-nums"
+                    style={{ color: value === rowMax ? "#C9A84C" : "#9A9694" }}
+                  >
+                    {value} / {rowMax}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+
             <div
               className="flex items-center justify-between px-6 py-4"
-              style={{
-                background: "rgba(139,92,246,0.06)",
-                borderTop: "1px solid rgba(139,92,246,0.15)",
-              }}
+              style={{ background: "rgba(201,168,76,0.05)", borderTop: "1px solid rgba(201,168,76,0.15)" }}
             >
-              <span className="text-sm font-bold" style={{ color: "#E8E4D8" }}>Total</span>
-              <span className="text-xl font-black" style={{ color: "#8B5CF6" }}>
+              <span className="text-sm font-semibold text-[#EDE8DC]">Total</span>
+              <span className="text-lg font-display font-[700] text-[#C9A84C]">
                 {breakdown.total} pts
               </span>
             </div>
@@ -223,15 +224,15 @@ export function MissionComplete({ mission, breakdown, badge }: Props) {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1 }}
+            transition={{ delay: 1.0, duration: 0.4, ease: EASE_OUT_EXPO }}
           >
-            <Link href="/student/city">
+            <Link href="/student/city" className="cursor-pointer block">
               <button
-                className="w-full py-4 rounded-xl font-semibold text-base transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
+                className="w-full py-4 rounded-sm font-semibold text-base transition-all duration-150 active:scale-[0.97] hover:bg-white cursor-pointer"
                 style={{
-                  background: "linear-gradient(135deg, #E8A820, #F5C040 50%, #00CCD8)",
-                  color: "#030507",
-                  boxShadow: "0 0 40px rgba(232,168,32,0.20), 0 0 80px rgba(0,204,216,0.08)",
+                  background: "#EDE8DC",
+                  color: "#0B0C0F",
+                  minHeight: "52px",
                 }}
               >
                 Return to MathWorld City

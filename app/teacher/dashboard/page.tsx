@@ -67,7 +67,7 @@ export default async function TeacherDashboard() {
         <div className="grid gap-4">
           {sessions.map((s: SessionRow) => (
             <Link key={s.id} href={`/teacher/sessions/${s.id}`}>
-              <div className="bg-city-card border border-city-border rounded-2xl px-6 py-5 flex items-center justify-between hover:border-indigo-500/50 transition-colors">
+              <div className="bg-space-surface border border-space-border rounded-2xl px-6 py-5 flex items-center justify-between hover:border-indigo-500/50 transition-colors">
                 <div>
                   <div className="flex items-center gap-3">
                     <span className="text-2xl font-black text-white tracking-widest">

@@ -3,98 +3,72 @@
 @tailwind utilities;
 
 :root {
-  --font-space: "Space Grotesk", system-ui, sans-serif;
-  --font-syne: "Playfair Display", Georgia, serif;
+  --font-sans: "Space Grotesk", system-ui, sans-serif;
+  --font-display: "Fraunces", Georgia, serif;
 }
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
 body {
-  background-color: #010101;
-  color: #F0F0F0;
-  font-family: var(--font-space);
+  background-color: #0B0C0F;
+  color: #EDE8DC;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
+/* Optical sizing for display headings */
+.font-display {
+  font-optical-sizing: auto;
+}
+
 /* ─── Glassmorphism ───────────────────────────────────────────────────────── */
 .glass {
-  background: rgba(15, 15, 18, 0.3);
+  background: rgba(17, 19, 24, 0.55);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: inset 0 0 40px rgba(255, 255, 255, 0.01), 0 10px 40px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .glass-light {
   background: rgba(255, 255, 255, 0.02);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* ─── Keyframes ───────────────────────────────────────────────────────────── */
 @keyframes starPulse {
-  0%, 100% { opacity: 0.08; transform: scale(1); }
-  50%       { opacity: 1;    transform: scale(1.6); }
-}
-
-@keyframes starGlow {
-  0%, 100% { opacity: 0.2; box-shadow: 0 0 0 0 transparent; }
-  50%       { opacity: 0.9; box-shadow: 0 0 6px 2px currentColor; }
+  0%, 100% { opacity: 0.06; transform: scale(1); }
+  50%       { opacity: 0.9;  transform: scale(1.4); }
 }
 
 @keyframes cosmicDrift {
   0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  33%       { transform: translate(1%, 1%) scale(1.02) rotate(1deg); }
-  66%       { transform: translate(-1%, 1%) scale(0.98) rotate(-1deg); }
+  33%       { transform: translate(1%, 0.8%) scale(1.015) rotate(0.6deg); }
+  66%       { transform: translate(-0.8%, 0.8%) scale(0.985) rotate(-0.6deg); }
 }
 
 @keyframes MathDrift {
-  0%, 100% { transform: translateY(0) rotate(0deg);   opacity: 0.3; }
-  25%       { transform: translateY(-20px) rotate(5deg);  opacity: 0.6; }
-  75%       { transform: translateY(10px) rotate(-3deg); opacity: 0.2; }
-}
-
-@keyframes auroraShift {
-  0%, 100% { opacity: 0.08; }
-  50%       { opacity: 0.22; }
+  0%, 100% { transform: translateY(0) rotate(0deg);    opacity: 0.18; }
+  25%       { transform: translateY(-18px) rotate(4deg);   opacity: 0.38; }
+  75%       { transform: translateY(10px) rotate(-2deg);  opacity: 0.12; }
 }
 
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-16px); }
+  50%       { transform: translateY(-14px); }
 }
 
-@keyframes floatA {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50%       { transform: translateY(-20px) rotate(8deg); }
-}
-
-@keyframes floatB {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50%       { transform: translateY(16px) rotate(-5deg); }
-}
-
-@keyframes floatC {
-  0%, 100% { transform: translateY(-10px) rotate(0deg); }
-  50%       { transform: translateY(10px) rotate(10deg); }
-}
-
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50%       { background-position: 100% 50%; }
-}
-
-@keyframes neonPulse {
-  0%, 100% { box-shadow: 0 0 8px currentColor, 0 0 24px currentColor; }
-  50%       { box-shadow: 0 0 18px currentColor, 0 0 50px currentColor, 0 0 80px currentColor; }
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 @keyframes scoreCount {
-  from { transform: translateY(14px); opacity: 0; }
+  from { transform: translateY(12px); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
 }
 
@@ -103,29 +77,26 @@ body {
   100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
 }
 
-@keyframes auroraBar {
+@keyframes goldBar {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-@keyframes orbitSlow {
-  0%   { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
+@keyframes scrollLine {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(200%); opacity: 0; }
 }
 
-@keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-/* ─── Aurora progress bar ─────────────────────────────────────────────────── */
-.aurora-bar {
+/* ─── Progress bar — warm gold, no neon ──────────────────────────────────── */
+.gold-bar {
   background: linear-gradient(
-    90deg, #6D28D9, #8B5CF6, #00CCD8, #D4AF37, #8B5CF6, #6D28D9
+    90deg, #7A6028, #C9A84C, #F5DFA0, #C9A84C, #7A6028
   );
   background-size: 300% 100%;
-  animation: auroraBar 4s ease infinite;
+  animation: goldBar 5s ease infinite;
 }
 
 /* ─── Reduced motion ──────────────────────────────────────────────────────── */
@@ -140,6 +111,12 @@ body {
 
 /* ─── Scrollbar ───────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #010101; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+::-webkit-scrollbar-track { background: #0B0C0F; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+/* ─── Focus ring reset ────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid rgba(201, 168, 76, 0.7);
+  outline-offset: 3px;
+}

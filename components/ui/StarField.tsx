@@ -17,14 +17,15 @@ function seededRand(seed: number) {
   };
 }
 
+// Warm palette — off-white, gold, warm parchment; no neon teal/violet
 const STAR_COLORS = [
-  "#F8F9FA", "#F8F9FA", "#F8F9FA",
-  "#C8D4F8", // cool blue-white
-  "#F5C040", // warm gold
-  "#00CCD8", // teal
+  "#EDE8DC", "#EDE8DC", "#EDE8DC",
+  "#F8F6F0", // warm bright white
+  "#F5DFA0", // warm gold
+  "#D4C898", // muted gold
 ];
 
-const GLOW_COLORS = ["#8B5CF6", "#D4AF37", "#00CCD8", "#F8F9FA"];
+const GLOW_COLORS = ["#C9A84C", "#F5DFA0", "#EDE8DC", "#F8F6F0"];
 
 export function StarField({ count = 150 }: { count?: number }) {
   const starsRef = useRef<Star[]>([]);
@@ -55,10 +56,7 @@ export function StarField({ count = 150 }: { count?: number }) {
             left: `${s.x}%`, top: `${s.y}%`,
             width: `${s.size}px`, height: `${s.size}px`,
             background: s.color, opacity: s.opacity,
-            animation: s.hasGlow
-              ? `starGlow ${s.duration}s ease-in-out ${s.delay}s infinite`
-              : `starPulse ${s.duration}s ease-in-out ${s.delay}s infinite`,
-            color: s.glowColor,
+            animation: `starPulse ${s.duration}s ease-in-out ${s.delay}s infinite`,
           }}
         />
       ))}

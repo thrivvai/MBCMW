@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Playfair_Display, Space_Grotesk } from "next/font/google";
+import { Fraunces, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const playfair = Playfair_Display({
+const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-syne",
+  weight: "variable",
+  axes: ["opsz", "SOFT", "WONK"],
+  style: ["normal", "italic"],
+  variable: "--font-display",
   display: "swap",
 });
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-space",
+  variable: "--font-sans",
   display: "swap",
 });
 
@@ -25,7 +27,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${playfair.variable} ${spaceGrotesk.variable}`}>
+      <html lang="en" className={`${fraunces.variable} ${spaceGrotesk.variable}`}>
         <body>{children}</body>
       </html>
     </ClerkProvider>

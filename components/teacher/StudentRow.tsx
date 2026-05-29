@@ -28,7 +28,7 @@ export function StudentRow({ student }: Props) {
       : "Waiting";
 
   return (
-    <tr className="border-b border-city-border hover:bg-white/5 transition-colors">
+    <tr className="border-b border-space-border hover:bg-white/5 transition-colors">
       <td className="px-4 py-3">
         <div className="flex items-center gap-2">
           <span className={`w-2 h-2 rounded-full shrink-0 ${statusDot}`} />

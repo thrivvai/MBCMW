@@ -160,8 +160,8 @@ export default function LiveSessionPage() {
       <ClassMetricsBar metrics={metrics} />
 
       {/* Student table */}
-      <div className="bg-city-card border border-city-border rounded-2xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-city-border flex items-center justify-between">
+      <div className="bg-space-surface border border-space-border rounded-2xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-space-border flex items-center justify-between">
           <p className="text-sm font-semibold text-gray-300">
             Students ({students.length})
           </p>
@@ -183,7 +183,7 @@ export default function LiveSessionPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-city-border text-xs text-gray-500 uppercase tracking-wider">
+                <tr className="border-b border-space-border text-xs text-gray-500 uppercase tracking-wider">
                   <th className="px-4 py-3 text-left">Student</th>
                   <th className="px-4 py-3 text-left">Status</th>
                   <th className="px-4 py-3 text-left">Progress</th>

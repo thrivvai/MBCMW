@@ -8,7 +8,7 @@ interface Props {
 
 function Metric({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="flex flex-col items-center bg-city-card border border-city-border rounded-xl px-6 py-4">
+    <div className="flex flex-col items-center bg-space-surface border border-space-border rounded-xl px-6 py-4">
       <span className="text-2xl font-black text-white">{value}</span>
       <span className="text-xs text-gray-400 mt-1 text-center">{label}</span>
     </div>

@@ -8,8 +8,8 @@ export default async function TeacherLayout({ children }: { children: React.Reac
   if (!userId) redirect("/sign-in");
 
   return (
-    <div className="min-h-screen bg-city-bg">
-      <header className="bg-city-bg/80 backdrop-blur-sm border-b border-city-border sticky top-0 z-20">
+    <div className="min-h-screen bg-space-bg">
+      <header className="bg-space-bg/80 backdrop-blur-sm border-b border-space-border sticky top-0 z-20">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/teacher/dashboard" className="flex items-center gap-2 text-white font-bold">
             <span className="text-xl">🏙️</span>
