@@ -222,3 +222,134 @@ export interface StudentSessionState {
   gradeBand: GradeBand;
   assignedMissions: string[];
 }
+
+// ─── Game Types ──────────────────────────────────────────────────────────────
+
+export type CharacterClass = "speedster" | "tactician" | "berserker" | "scholar";
+
+export type BattleRoomStatus =
+  | "lobby"
+  | "active"
+  | "question_open"
+  | "question_closed"
+  | "ended";
+
+export interface BattleQuestion {
+  id: string;
+  text: string;
+  type: "multiple_choice" | "numeric";
+  options?: string[];
+  correct?: string;
+  correctNumeric?: number;
+  acceptableRange?: [number, number];
+  hint: string;
+  explanation: string;
+  timeLimitSeconds: number;
+}
+
+export interface QuestionSet {
+  id: string;
+  title: string;
+  gradeBand: string | null;
+  questions: BattleQuestion[];
+}
+
+export interface BattleRoom {
+  id: string;
+  teacherId: string;
+  roomCode: string;
+  questionSetId: string;
+  mode: "individual" | "team";
+  status: BattleRoomStatus;
+  currentQuestionIndex: number;
+  questionStartedAt: string | null;
+  createdAt: string;
+  endedAt: string | null;
+}
+
+export interface Player {
+  id: string;
+  roomId: string;
+  nickname: string;
+  characterName: string;
+  characterClass: CharacterClass;
+  teamId: string | null;
+  abilityUsed: boolean;
+  joinedAt: string;
+}
+
+export interface PlayerScore {
+  playerId: string;
+  roomId: string;
+  totalScore: number;
+  questionsAnswered: number;
+  questionsCorrect: number;
+  currentStreak: number;
+  maxStreak: number;
+  abilityUsesRemaining: number;
+}
+
+export interface LeaderboardPlayer {
+  playerId: string;
+  nickname: string;
+  characterName: string;
+  characterClass: CharacterClass;
+  totalScore: number;
+  questionsCorrect: number;
+  currentStreak: number;
+}
+
+export interface BattleState {
+  room: BattleRoom;
+  currentQuestion: BattleQuestion | null;
+  leaderboard: LeaderboardPlayer[];
+  questionSet: QuestionSet;
+}
+
+// Safe version served to students (correct answers stripped server-side)
+export type SafeBattleQuestion = Pick<
+  BattleQuestion,
+  "id" | "text" | "type" | "options" | "hint" | "timeLimitSeconds"
+>;
+
+// ─── Game API Request / Response Types ──────────────────────────────────────
+
+export interface JoinRoomRequest {
+  roomCode: string;
+  nickname: string;
+  characterName: string;
+  characterClass: CharacterClass;
+}
+
+export interface JoinRoomResponse {
+  playerId: string;
+  roomId: string;
+  roomCode: string;
+  questionSetTitle: string;
+}
+
+export interface SubmitBattleAnswerRequest {
+  playerId: string;
+  questionIndex: number;
+  answer: string;
+  timeRemainingMs: number;
+}
+
+export interface SubmitBattleAnswerResponse {
+  isCorrect: boolean;
+  finalScore: number;
+  abilityTriggered: string | null;
+  correctAnswer: string;
+  explanation: string;
+}
+
+// ─── Client-Side Player Store Types ─────────────────────────────────────────
+
+export interface PlayerState {
+  playerId: string;
+  roomId: string;
+  roomCode: string;
+  nickname: string;
+  characterName: string;
+  characterClass: CharacterClass | "";
+}
