@@ -1,0 +1,34 @@
+# ---- Unity ----
+# Generated/derived folders (never commit these)
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+
+# Asset meta data should only be ignored when the corresponding asset is also ignored
+!/[Aa]ssets/**/*.meta
+
+# Visual Studio / Rider / VS Code caches
+.vs/
+.idea/
+.vscode/
+*.csproj
+*.sln
+*.userprefs
+*.suo
+*.user
+*.unityproj
+
+# Build artifacts
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# OS files
+.DS_Store
+Thumbs.db
