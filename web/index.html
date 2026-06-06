@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Virtual Financial Field Trips — Bank (Crawl)</title>
+    <meta name="description" content="A-Frame WebXR crawl prototype: an empty bank lobby you can look around in." />
+    <!-- A-Frame: the only dependency. Loaded from a CDN, so just open this file. -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  </head>
+  <body>
+    <!--
+      CRAWL PHASE GOAL: walk into a bank lobby and look around in VR.
+      No math or interaction yet — that's the next phase. See web/README.md.
+
+      How to view:
+        - Desktop: open this file in a browser. Drag the mouse to look, WASD to move.
+        - Headset (Quest): serve this folder over https and open the URL in the
+          Quest browser, then tap the "VR" goggles button in the corner.
+    -->
+    <a-scene background="color: #ECECEC">
+
+      <!-- ---------- Lighting ---------- -->
+      <a-light type="ambient" color="#BBB"></a-light>
+      <a-light type="directional" color="#FFF" intensity="0.6" position="-1 2 1"></a-light>
+
+      <!-- ---------- Floor ---------- -->
+      <a-plane rotation="-90 0 0" width="20" height="20"
+               color="#C9B79C" shadow></a-plane>
+
+      <!-- ---------- Walls (a simple box room, 20 x 20, 4 high) ---------- -->
+      <a-box position="0 2 -10" width="20" height="4" depth="0.3" color="#D8E2EC"></a-box> <!-- back -->
+      <a-box position="0 2 10"  width="20" height="4" depth="0.3" color="#D8E2EC"></a-box> <!-- front -->
+      <a-box position="-10 2 0" width="0.3" height="4" depth="20" color="#D8E2EC"></a-box> <!-- left -->
+      <a-box position="10 2 0"  width="0.3" height="4" depth="20" color="#D8E2EC"></a-box> <!-- right -->
+
+      <!-- ---------- Welcome sign on the back wall ---------- -->
+      <a-entity position="0 3 -9.8">
+        <a-plane width="8" height="1.4" color="#1F6FB2"></a-plane>
+        <a-text value="FIRST COMMUNITY BANK" align="center"
+                color="#FFFFFF" width="12" position="0 0.15 0.02"></a-text>
+        <a-text value="Welcome! Step up to the teller." align="center"
+                color="#D7ECFF" width="9" position="0 -0.4 0.02"></a-text>
+      </a-entity>
+
+      <!-- ---------- Teller counter ---------- -->
+      <a-box position="0 0.6 -5" width="6" height="1.2" depth="1"
+             color="#8C6239" shadow></a-box>
+      <a-box position="0 1.25 -5" width="6" height="0.1" depth="1.2"
+             color="#A9784C" shadow></a-box>
+      <a-text value="TELLER" align="center" color="#3A2A14"
+              width="6" position="0 1.4 -4.45" rotation="-30 0 0"></a-text>
+
+      <!-- ---------- ATM placeholder (next phase will make this interactive) ---------- -->
+      <a-box position="6 1 -5" width="1" height="2" depth="0.6"
+             color="#2E3B45" shadow></a-box>
+      <a-text value="ATM" align="center" color="#9FE3FF"
+              width="3" position="6 1.6 -4.69"></a-text>
+
+      <!-- ---------- Player rig: look + move with mouse/WASD on desktop ---------- -->
+      <a-entity id="rig" position="0 1.6 3">
+        <a-camera wasd-controls="acceleration: 30" look-controls></a-camera>
+      </a-entity>
+
+    </a-scene>
+  </body>
+</html>
