@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Virtual Financial Field Trips — Bank (Walk)</title>
+    <meta name="description" content="A-Frame WebXR prototype: bank lobby with teleport movement and a clickable ATM." />
+    <!-- A-Frame core -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <!-- Teleport locomotion (point a controller at the floor and release) -->
+    <script src="https://cdn.jsdelivr.net/npm/aframe-blink-controls@0.4.3/dist/aframe-blink-controls.min.js"></script>
+
+    <script>
+      /* ---- Small custom components (plain JS, no extra dependencies) ---- */
+
+      // Toggle a target entity's visibility when this entity is clicked.
+      AFRAME.registerComponent('click-toggle', {
+        schema: { target: { type: 'selector' } },
+        init: function () {
+          this.el.addEventListener('click', () => {
+            const t = this.data.target;
+            if (!t) return;
+            t.setAttribute('visible', !t.getAttribute('visible'));
+          });
+        }
+      });
+
+      // Hide a target entity when this entity is clicked (e.g. a Close button).
+      AFRAME.registerComponent('click-hide', {
+        schema: { target: { type: 'selector' } },
+        init: function () {
+          this.el.addEventListener('click', () => {
+            if (this.data.target) this.data.target.setAttribute('visible', false);
+          });
+        }
+      });
+
+      // Brighten a clickable object while the cursor/laser is over it.
+      AFRAME.registerComponent('hover-highlight', {
+        init: function () {
+          const mesh = () => this.el.getObject3D('mesh');
+          this.el.addEventListener('mouseenter', () => {
+            const m = mesh(); if (m && m.material) m.material.emissive?.setHex(0x335577);
+          });
+          this.el.addEventListener('mouseleave', () => {
+            const m = mesh(); if (m && m.material) m.material.emissive?.setHex(0x000000);
+          });
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <!--
+      WALK PHASE: teleport movement + a clickable ATM that opens a world panel.
+        - Desktop: drag mouse to look, WASD to walk, CLICK the ATM with the mouse.
+        - Headset (Quest): point a controller at the floor + press thumbstick to
+          teleport; point at the ATM and pull the trigger to open the panel.
+      See web/README.md.
+    -->
+    <a-scene background="color: #ECECEC">
+
+      <!-- ---------- Lighting ---------- -->
+      <a-light type="ambient" color="#BBB"></a-light>
+      <a-light type="directional" color="#FFF" intensity="0.6" position="-1 2 1"></a-light>
+
+      <!-- ---------- Floor (class "ground" = teleportable surface) ---------- -->
+      <a-plane class="ground" rotation="-90 0 0" width="20" height="20"
+               color="#C9B79C" shadow></a-plane>
+
+      <!-- ---------- Walls ---------- -->
+      <a-box position="0 2 -10" width="20" height="4" depth="0.3" color="#D8E2EC"></a-box>
+      <a-box position="0 2 10"  width="20" height="4" depth="0.3" color="#D8E2EC"></a-box>
+      <a-box position="-10 2 0" width="0.3" height="4" depth="20" color="#D8E2EC"></a-box>
+      <a-box position="10 2 0"  width="0.3" height="4" depth="20" color="#D8E2EC"></a-box>
+
+      <!-- ---------- Welcome sign ---------- -->
+      <a-entity position="0 3 -9.8">
+        <a-plane width="8" height="1.4" color="#1F6FB2"></a-plane>
+        <a-text value="FIRST COMMUNITY BANK" align="center"
+                color="#FFFFFF" width="12" position="0 0.15 0.02"></a-text>
+        <a-text value="Teleport to the ATM and tap it to begin." align="center"
+                color="#D7ECFF" width="9" position="0 -0.4 0.02"></a-text>
+      </a-entity>
+
+      <!-- ---------- Teller counter ---------- -->
+      <a-box position="0 0.6 -5" width="6" height="1.2" depth="1" color="#8C6239" shadow></a-box>
+      <a-box position="0 1.25 -5" width="6" height="0.1" depth="1.2" color="#A9784C" shadow></a-box>
+      <a-text value="TELLER" align="center" color="#3A2A14"
+              width="6" position="0 1.4 -4.45" rotation="-30 0 0"></a-text>
+
+      <!-- ---------- ATM (clickable: opens the panel below) ---------- -->
+      <a-box id="atm" class="clickable" hover-highlight
+             click-toggle="target: #atmPanel"
+             position="6 1 -5" width="1" height="2" depth="0.6"
+             color="#2E3B45" shadow></a-box>
+      <a-text value="ATM" align="center" color="#9FE3FF"
+              width="3" position="6 1.6 -4.69"></a-text>
+
+      <!-- ---------- World-space panel (hidden until the ATM is clicked) ---------- -->
+      <a-entity id="atmPanel" visible="false" position="6 1.6 -3.6">
+        <a-plane width="2.4" height="1.8" color="#0F2230" opacity="0.96"
+                 material="shader: flat"></a-plane>
+        <a-text value="WELCOME TO THE ATM" align="center" color="#9FE3FF"
+                width="2.4" position="0 0.66 0.02"></a-text>
+        <a-text width="2.2" align="center" color="#EAF6FF" position="0 0.05 0.02"
+                value="You earned $50.00 mowing lawns.\nYou owe the bank $12.75.\n\nIn the next step you'll figure\nout your change and make a deposit."></a-text>
+        <!-- Close button -->
+        <a-entity class="clickable" hover-highlight click-hide="target: #atmPanel"
+                  position="0 -0.66 0.03">
+          <a-plane width="1" height="0.3" color="#1F6FB2"></a-plane>
+          <a-text value="CLOSE" align="center" color="#FFFFFF"
+                  width="2.2" position="0 0 0.01"></a-text>
+        </a-entity>
+      </a-entity>
+
+      <!-- ---------- Player rig ---------- -->
+      <a-entity id="rig" position="0 0 3">
+        <a-camera id="camera" position="0 1.6 0" wasd-controls="acceleration: 30" look-controls></a-camera>
+
+        <!-- VR controllers: laser for pointing/clicking, blink-controls for teleport -->
+        <a-entity id="leftHand" laser-controls="hand: left"
+                  raycaster="objects: .clickable; far: 12"
+                  blink-controls="cameraRig: #rig; teleportOrigin: #camera; collisionEntities: .ground; buttons: thumbstick"></a-entity>
+        <a-entity id="rightHand" laser-controls="hand: right"
+                  raycaster="objects: .clickable; far: 12"
+                  blink-controls="cameraRig: #rig; teleportOrigin: #camera; collisionEntities: .ground; buttons: thumbstick"></a-entity>
+      </a-entity>
+
+      <!-- Desktop: mouse acts as the pointer for clicking .clickable objects -->
+      <a-entity cursor="rayOrigin: mouse" raycaster="objects: .clickable; far: 30"></a-entity>
+
+    </a-scene>
+  </body>
+</html>
