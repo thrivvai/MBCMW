@@ -42,12 +42,15 @@ look around; use **W/A/S/D** to walk.
 > ```
 > then visit http://localhost:8000
 
-### On a Quest headset (later)
-WebXR needs **HTTPS**. Easiest options:
-1. Push this folder to **GitHub Pages** (free) and open the URL in the Quest
-   browser, or
-2. Use a tunneling tool (e.g. `ngrok http 8000`) to expose your local server
-   over https.
+### On a Quest headset
+WebXR needs **HTTPS**. This folder auto-deploys to **GitHub Pages** on every
+merge to `main` (see `.github/workflows/deploy-field-trips.yml`):
+
+> **Live URL:** https://thrivvai.github.io/MBCMW/
+
+Open that URL in the Quest browser. For testing local changes before merging,
+use a tunneling tool instead (e.g. `ngrok http 8000`) to expose your local
+server over https.
 
 Then, in the Quest browser, open the page and tap the **VR goggles button** in
 the bottom-right corner to enter immersive mode.
