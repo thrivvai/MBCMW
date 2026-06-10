@@ -10,9 +10,23 @@ build.
 
 ## What's here
 
-- `index.html` — an empty **bank lobby** you can look around in (the "crawl"
-  milestone from `../docs/01-roadmap.md`). Floor, walls, a welcome sign, a teller
-  counter, and an ATM placeholder. No math or interaction yet.
+- `index.html` — a **bank lobby** with the "walk" features now in place
+  (`../docs/01-roadmap.md`): **teleport locomotion** and a **clickable ATM** that
+  opens a world-space info panel. Floor, walls, welcome sign, teller counter, and
+  the interactive ATM. The first math step is teased in the panel but not yet
+  wired up.
+
+## Controls
+
+| | Desktop (no headset) | Quest headset |
+|---|---|---|
+| Look | drag the mouse | move your head |
+| Walk | **W / A / S / D** | **teleport**: point a controller at the floor, press the thumbstick/trigger, release |
+| Use the ATM | **click it** with the mouse | point a controller at it, pull the trigger |
+| Close the panel | click **CLOSE** | point + trigger on **CLOSE** |
+
+Dependencies (both loaded from a CDN, nothing to install): A-Frame core +
+`aframe-blink-controls` for teleport.
 
 ## How to run it
 
@@ -38,12 +52,12 @@ WebXR needs **HTTPS**. Easiest options:
 Then, in the Quest browser, open the page and tap the **VR goggles button** in
 the bottom-right corner to enter immersive mode.
 
-## Next steps (turn crawl → walk)
-- Add VR **locomotion** (teleport) so you can move with the controllers, not just
-  WASD.
-- Make the **ATM** interactive: gaze/controller click opens a world-space UI
-  panel.
-- Add grabbable **money objects** (bills/coins) and a tray that sums them.
-- Then wire in the first **math step** from `../docs/02-curriculum-design.md`.
+## Next steps (turn walk → run)
+- [x] VR **teleport locomotion**.
+- [x] Make the **ATM** interactive (opens a world-space panel).
+- [ ] Add an interactive **math step** in the panel: show "How much is left after
+      paying $12.75?" with selectable answers and right/wrong feedback.
+- [ ] Add grabbable **money objects** (bills/coins) and a tray that sums them.
+- [ ] Log attempts/time for teachers.
 
-These map to Phases 2–3 in `../docs/01-roadmap.md`.
+These map to Phase 3 (the MVP vertical slice) in `../docs/01-roadmap.md`.
