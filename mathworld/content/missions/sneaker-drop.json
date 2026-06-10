@@ -1,0 +1,98 @@
+{
+  "id": "sneaker-drop",
+  "title": "The Sneaker Drop",
+  "gradeBand": "6-8",
+  "district": "market-street",
+  "theme": "Entrepreneurship and Profit",
+  "mathFocus": "Percentages, markup, sales tax, profit margin",
+  "estimatedMinutes": 20,
+  "scenario": {
+    "setup": "You're running a one-day sneaker resale booth at your school fair. You scored 5 pairs of limited-edition sneakers at wholesale price — now it's time to price them, sell them, and count your profit.",
+    "conflict": "Price too high and nobody buys. Price too low and you lose money. You also need to account for sales tax so your customers pay the right amount at checkout.",
+    "objective": "Price your sneakers correctly, collect the right tax, and maximize your profit"
+  },
+  "learningObjective": "Apply percentage calculations for markup, sales tax, and profit margin in a real entrepreneurship scenario",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "numeric",
+      "text": "You bought 5 pairs of sneakers at the wholesale price of $45 each. What is your total wholesale cost?",
+      "correctNumeric": 225,
+      "acceptableRange": [224.95, 225.05],
+      "hint": "Multiply the number of pairs by the price per pair.",
+      "explanation": "5 pairs × $45 each = $225 total wholesale cost.",
+      "points": 10
+    },
+    {
+      "id": "q2",
+      "type": "numeric",
+      "text": "You want to apply a 40% markup to your wholesale price. What should your selling price be per pair?",
+      "correctNumeric": 63.00,
+      "acceptableRange": [62.95, 63.05],
+      "hint": "Markup amount = $45 × 0.40. Then add that to the original price.",
+      "explanation": "Markup: $45 × 0.40 = $18.00. Selling price: $45 + $18 = $63.00 per pair.",
+      "points": 10
+    },
+    {
+      "id": "q3",
+      "type": "multiple_choice",
+      "text": "Your school fair charges 8% sales tax on all purchases. A customer buys one pair at $63.00. What is the total they pay including tax?",
+      "options": ["$63.08", "$67.04", "$68.04", "$71.00"],
+      "correct": "$68.04",
+      "hint": "Tax amount = $63.00 × 0.08. Add that to the selling price.",
+      "explanation": "Tax: $63.00 × 0.08 = $5.04. Customer total: $63.00 + $5.04 = $68.04.",
+      "points": 10
+    },
+    {
+      "id": "q4",
+      "type": "numeric",
+      "text": "You sold all 5 pairs at $63.00 each (the tax goes to the fair, not your profit). What is your profit after subtracting your wholesale cost?",
+      "correctNumeric": 90,
+      "acceptableRange": [89.95, 90.05],
+      "hint": "Revenue = 5 × $63.00. Profit = Revenue − Wholesale Cost.",
+      "explanation": "Revenue: 5 × $63.00 = $315.00. Profit: $315.00 − $225.00 = $90.00.",
+      "points": 10
+    },
+    {
+      "id": "q5",
+      "type": "multiple_choice",
+      "text": "What is your profit margin percentage? (Profit margin = Profit ÷ Revenue × 100)",
+      "options": ["20.0%", "28.6%", "40.0%", "66.7%"],
+      "correct": "28.6%",
+      "hint": "Divide your profit ($90) by your total revenue ($315), then multiply by 100.",
+      "explanation": "Profit margin = ($90 ÷ $315) × 100 = 0.2857 × 100 ≈ 28.6%. Note: markup % and profit margin % are different numbers!",
+      "points": 10
+    }
+  ],
+  "decision": {
+    "prompt": "You made $90 in profit from your sneaker booth. The fair happens again in 2 months. What do you do with your earnings?",
+    "options": [
+      {
+        "id": "reinvest",
+        "text": "Reinvest all $90 — buy 2 more pairs at wholesale ($45 each)",
+        "outcome": "Bold reinvestment! Growing your inventory means more potential profit next time. $90 ÷ $45 = exactly 2 more pairs to sell."
+      },
+      {
+        "id": "save",
+        "text": "Save all $90 for a bigger future launch",
+        "outcome": "Patient and strategic! Saving your profit builds capital for a larger operation down the road — a classic business play."
+      },
+      {
+        "id": "split",
+        "text": "Split it: reinvest $45, save $45",
+        "outcome": "Balanced approach! One new pair of inventory plus savings — you're diversifying, which reduces risk while keeping the business growing."
+      }
+    ],
+    "points": 15
+  },
+  "reflection": {
+    "prompt": "If you could run the sneaker booth again, would you change your 40% markup? How do you balance making a profit with keeping prices fair for your customers?",
+    "points": 10
+  },
+  "badge": {
+    "id": "market-street-entrepreneur",
+    "name": "Market Street Entrepreneur",
+    "description": "Ran a profitable sneaker resale booth at the school fair"
+  },
+  "completionBonus": 25
+}
