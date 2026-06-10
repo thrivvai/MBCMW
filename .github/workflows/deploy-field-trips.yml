@@ -1,0 +1,43 @@
+name: Deploy Field Trips prototype to GitHub Pages
+
+# Publishes field-trips/web (the WebXR/A-Frame prototype) to GitHub Pages so it
+# can be opened over HTTPS in a Quest browser. Requires Pages to be enabled in
+# repo Settings → Pages with source = "GitHub Actions".
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "field-trips/web/**"
+      - ".github/workflows/deploy-field-trips.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload prototype
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: field-trips/web
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "mathworld/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "mathworld/**"
+      - ".github/workflows/ci.yml"
+
+defaults:
+  run:
+    working-directory: mathworld
+
+jobs:
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: mathworld/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript type check
+        run: npx tsc --noEmit
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: mathworld/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # next lint requires env vars to be present for the Clerk import;
+      # we supply non-functional placeholders so the linter can resolve modules.
+      - name: ESLint
+        run: npx next lint
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_placeholder
+          CLERK_SECRET_KEY: sk_test_placeholder
