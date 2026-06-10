@@ -21,8 +21,8 @@ build.
 | | Desktop (no headset) | Quest headset |
 |---|---|---|
 | Look | drag the mouse | move your head |
-| Walk | **W / A / S / D** | **teleport**: point a controller at the floor, press the thumbstick/trigger, release |
-| Use the ATM | **click it** with the mouse | point a controller at it, pull the trigger |
+| Walk | **W / A / S / D** | **teleport**: point a controller at the floor, press the **thumbstick**, release |
+| Use the ATM | **click it** with the mouse | point a controller at it, pull the **trigger** |
 | Close the panel | click **CLOSE** | point + trigger on **CLOSE** |
 
 Dependencies (both loaded from a CDN, nothing to install): A-Frame core +
