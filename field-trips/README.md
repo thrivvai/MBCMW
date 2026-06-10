@@ -8,7 +8,18 @@ simple interest, linear growth) is the *learning*.
 
 Target hardware: **Meta Quest** (Quest 2 / 3 / 3S).
 
-## Stack decision
+## Try it now (no install, no headset)
+
+A **WebXR prototype** built with A-Frame lives in [`web/`](web/) — open
+[`web/index.html`](web/index.html) in any browser: drag to look, **WASD** to
+walk, click the **ATM**. On a Quest, open the GitHub Pages deployment of this
+folder in the headset browser and tap the VR goggles button. See
+[`web/README.md`](web/README.md) for controls and details.
+
+The prototype is the fast path while the Unity build below is the long-term
+"graduation" target.
+
+## Stack decision (long-term Unity build)
 
 | Choice | Value | Why |
 |---|---|---|
@@ -22,8 +33,9 @@ See [`docs/00-getting-started.md`](docs/00-getting-started.md) for setup, and
 
 ## Status
 
-Project foundation / planning. No Unity project committed yet — that's the next
-step in the getting-started guide.
+Walk-phase WebXR prototype in [`web/`](web/) (teleport locomotion + clickable
+ATM). No Unity project committed yet — that's the next step in the
+getting-started guide.
 
 ## Documentation
 
