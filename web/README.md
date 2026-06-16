@@ -10,11 +10,11 @@ build.
 
 ## What's here
 
-- `index.html` — a **bank lobby** with the "walk" features now in place
-  (`../docs/01-roadmap.md`): **teleport locomotion** and a **clickable ATM** that
-  opens a world-space info panel. Floor, walls, welcome sign, teller counter, and
-  the interactive ATM. The first math step is teased in the panel but not yet
-  wired up.
+- `index.html` — a **bank lobby** with **teleport locomotion** and an
+  **interactive ATM** (`../docs/01-roadmap.md`). Clicking the ATM opens a
+  world-space panel that runs the first real math step: a decimal-subtraction
+  question ($50.00 − $12.75) with selectable answers, a hint on a wrong choice,
+  and a success/debrief screen. This is the start of the Phase 3 MVP scenario.
 
 ## Controls
 
@@ -55,9 +55,13 @@ the bottom-right corner to enter immersive mode.
 ## Next steps (turn walk → run)
 - [x] VR **teleport locomotion**.
 - [x] Make the **ATM** interactive (opens a world-space panel).
-- [ ] Add an interactive **math step** in the panel: show "How much is left after
-      paying $12.75?" with selectable answers and right/wrong feedback.
-- [ ] Add grabbable **money objects** (bills/coins) and a tray that sums them.
-- [ ] Log attempts/time for teachers.
+- [x] First interactive **math step**: $50.00 − $12.75 with answer choices, a
+      hint on wrong answers, and a debrief.
+- [ ] Add grabbable **money objects** (bills/coins) and a tray that sums them
+      (the "make change" manipulation step).
+- [ ] Deposit step + on-screen ledger.
+- [ ] Real attempt/time **logging** for teachers (currently just `console.log`).
 
-These map to Phase 3 (the MVP vertical slice) in `../docs/01-roadmap.md`.
+The math logic lives in the `money-quiz` component in `index.html`, kept separate
+from the scene markup per `../docs/03-architecture.md`. These map to Phase 3 (the
+MVP vertical slice) in `../docs/01-roadmap.md`.

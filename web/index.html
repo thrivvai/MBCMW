@@ -46,6 +46,61 @@
           });
         }
       });
+
+      /*
+        money-quiz: drives the ATM panel's intro -> question -> done flow.
+        The MATH lives here (not in the markup), per docs/03-architecture.md, so
+        it's easy to swap in new problems later. Logs attempts to the console as a
+        stand-in for the future SessionLogger / teacher dashboard.
+      */
+      AFRAME.registerComponent('money-quiz', {
+        schema: { correct: { type: 'number', default: 37.25 } },
+        init: function () {
+          this.attempts = 0;
+          this.intro    = this.el.querySelector('#screen-intro');
+          this.question = this.el.querySelector('#screen-question');
+          this.done     = this.el.querySelector('#screen-done');
+          this.hint     = this.el.querySelector('#hint');
+
+          this.el.querySelector('#beginBtn').addEventListener('click', () => {
+            this.intro.setAttribute('visible', false);
+            this.question.setAttribute('visible', true);
+          });
+
+          this.el.querySelectorAll('.answer').forEach((btn) => {
+            btn.addEventListener('click', () => this.choose(btn));
+          });
+
+          // Any element marked .close-panel hides the panel and resets the flow.
+          this.el.querySelectorAll('.close-panel').forEach((b) => {
+            b.addEventListener('click', () => {
+              this.el.setAttribute('visible', false);
+              this.reset();
+            });
+          });
+        },
+        choose: function (btn) {
+          this.attempts++;
+          const val = parseFloat(btn.getAttribute('data-value'));
+          const isCorrect = Math.abs(val - this.data.correct) < 0.001;
+          console.log('[quiz] picked', val, '| correct?', isCorrect, '| attempt', this.attempts);
+          if (isCorrect) {
+            this.question.setAttribute('visible', false);
+            this.done.setAttribute('visible', true);
+          } else {
+            this.hint.setAttribute('value', 'Not quite. Line up the decimal points:\n50.00 - 12.75. Try again!');
+            btn.setAttribute('color', '#B23A3A');
+          }
+        },
+        reset: function () {
+          this.attempts = 0;
+          this.intro.setAttribute('visible', true);
+          this.question.setAttribute('visible', false);
+          this.done.setAttribute('visible', false);
+          this.hint.setAttribute('value', '');
+          this.el.querySelectorAll('.answer').forEach((b) => b.setAttribute('color', '#20486B'));
+        }
+      });
     </script>
   </head>
   <body>
@@ -95,20 +150,57 @@
       <a-text value="ATM" align="center" color="#9FE3FF"
               width="3" position="6 1.6 -4.69"></a-text>
 
-      <!-- ---------- World-space panel (hidden until the ATM is clicked) ---------- -->
-      <a-entity id="atmPanel" visible="false" position="6 1.6 -3.6">
+      <!-- ---------- World-space ATM panel: interactive math flow ---------- -->
+      <a-entity id="atmPanel" visible="false" money-quiz="correct: 37.25" position="6 1.6 -3.6">
+        <!-- Backdrop -->
         <a-plane width="2.4" height="1.8" color="#0F2230" opacity="0.96"
                  material="shader: flat"></a-plane>
-        <a-text value="WELCOME TO THE ATM" align="center" color="#9FE3FF"
-                width="2.4" position="0 0.66 0.02"></a-text>
-        <a-text width="2.2" align="center" color="#EAF6FF" position="0 0.05 0.02"
-                value="You earned $50.00 mowing lawns.\nYou owe the bank $12.75.\n\nIn the next step you'll figure\nout your change and make a deposit."></a-text>
-        <!-- Close button -->
-        <a-entity class="clickable" hover-highlight click-hide="target: #atmPanel"
-                  position="0 -0.66 0.03">
-          <a-plane width="1" height="0.3" color="#1F6FB2"></a-plane>
-          <a-text value="CLOSE" align="center" color="#FFFFFF"
-                  width="2.2" position="0 0 0.01"></a-text>
+
+        <!-- Corner close (X) — always available -->
+        <a-plane class="clickable close-panel" hover-highlight color="#1F6FB2"
+                 width="0.22" height="0.22" position="1.05 0.78 0.03"
+                 text="value: X; align: center; color: #FFFFFF; width: 1.4"></a-plane>
+
+        <!-- Screen 1: intro -->
+        <a-entity id="screen-intro" position="0 0 0.03">
+          <a-text value="WELCOME TO THE ATM" align="center" color="#9FE3FF"
+                  width="2.4" position="0 0.66 0"></a-text>
+          <a-text width="2.2" align="center" color="#EAF6FF" position="0 0.12 0"
+                  value="You earned $50.00 mowing lawns.\nYou owe the bank $12.75.\n\nLet's figure out what's left."></a-text>
+          <a-plane id="beginBtn" class="clickable" hover-highlight color="#1F8A4C"
+                   width="1.0" height="0.32" position="0 -0.58 0"
+                   text="value: BEGIN; align: center; color: #FFFFFF; width: 2"></a-plane>
+        </a-entity>
+
+        <!-- Screen 2: the question (decimal subtraction) -->
+        <a-entity id="screen-question" visible="false" position="0 0 0.03">
+          <a-text width="2.2" align="center" color="#EAF6FF" position="0 0.66 0"
+                  value="You have $50.00 and pay $12.75.\nHow much do you have left?"></a-text>
+          <a-plane class="clickable answer" hover-highlight data-value="37.25" color="#20486B"
+                   width="1.0" height="0.32" position="-0.58 0.18 0"
+                   text="value: $37.25; align: center; color: #FFFFFF; width: 2"></a-plane>
+          <a-plane class="clickable answer" hover-highlight data-value="38.25" color="#20486B"
+                   width="1.0" height="0.32" position="0.58 0.18 0"
+                   text="value: $38.25; align: center; color: #FFFFFF; width: 2"></a-plane>
+          <a-plane class="clickable answer" hover-highlight data-value="37.75" color="#20486B"
+                   width="1.0" height="0.32" position="-0.58 -0.20 0"
+                   text="value: $37.75; align: center; color: #FFFFFF; width: 2"></a-plane>
+          <a-plane class="clickable answer" hover-highlight data-value="47.25" color="#20486B"
+                   width="1.0" height="0.32" position="0.58 -0.20 0"
+                   text="value: $47.25; align: center; color: #FFFFFF; width: 2"></a-plane>
+          <a-text id="hint" width="2.2" align="center" color="#FFD27F"
+                  position="0 -0.66 0" value=""></a-text>
+        </a-entity>
+
+        <!-- Screen 3: success / debrief -->
+        <a-entity id="screen-done" visible="false" position="0 0 0.03">
+          <a-text value="Correct! Nice work." align="center" color="#9CFFB0"
+                  width="2.4" position="0 0.6 0"></a-text>
+          <a-text width="2.2" align="center" color="#EAF6FF" position="0 0.0 0"
+                  value="You used decimal subtraction to handle\nreal money: $50.00 - $12.75 = $37.25.\n\nThat's the same math grown-ups use\nevery day."></a-text>
+          <a-plane class="clickable close-panel" hover-highlight color="#1F6FB2"
+                   width="1.0" height="0.32" position="0 -0.62 0"
+                   text="value: DONE; align: center; color: #FFFFFF; width: 2"></a-plane>
         </a-entity>
       </a-entity>
 
