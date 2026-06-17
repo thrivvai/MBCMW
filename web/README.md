@@ -10,13 +10,29 @@ build.
 
 ## What's here
 
-- `index.html` — a **bank lobby** with **teleport locomotion** and an
-  **interactive ATM** (`../docs/01-roadmap.md`). Clicking the ATM opens a
-  world-space panel that runs the first real math step: a decimal-subtraction
+- `index.html` — a **bank lobby** with a **start/sign-in screen** (asks the
+  student's name, then enters), **teleport locomotion**, and an **interactive
+  ATM** (`../docs/01-roadmap.md`). The interior has a ceiling with lights, carpet,
+  a glass entrance with daylight, a branded accent wall, a reception desk with a
+  teller, a branded ATM kiosk, welcome kiosks, and plants. Clicking the ATM opens
+  a world-space panel that runs the first math step: a decimal-subtraction
   question ($50.00 − $12.75) with selectable answers, a hint on a wrong choice,
-  and a success/debrief screen. This is the start of the Phase 3 MVP scenario.
+  and a success/debrief screen.
+
+## On visual realism
+
+This interior is built from A-Frame **primitives** (boxes, planes) with lighting
+and materials — believable, but not photorealistic. Photoreal interiors like a
+reference render come from **imported 3D model assets** (glTF/`.glb` files with
+textures, e.g. free models from Poly Pizza / Sketchfab / Quaternius) or from the
+Unity path. Dropping real furniture/ATM/teller models into this scene with
+`<a-gltf-model>` is the next realism step whenever you want it — the interaction
+code stays the same.
 
 ## Controls
+
+Before the scene loads you get a **start screen**: type a name and click **Enter
+the Bank** (the name is used for the attempt logging).
 
 | | Desktop (no headset) | Quest headset |
 |---|---|---|

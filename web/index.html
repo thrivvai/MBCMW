@@ -2,12 +2,34 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Virtual Financial Field Trips — Bank (Walk)</title>
-    <meta name="description" content="A-Frame WebXR prototype: bank lobby with teleport movement and a clickable ATM." />
+    <title>Virtual Financial Field Trips — First Community Bank</title>
+    <meta name="description" content="A-Frame WebXR prototype: a bank lobby with teleport movement and an interactive ATM math scenario." />
     <!-- A-Frame core -->
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <!-- Teleport locomotion (point a controller at the floor and release) -->
     <script src="https://cdn.jsdelivr.net/npm/aframe-blink-controls@0.4.3/dist/aframe-blink-controls.min.js"></script>
+
+    <style>
+      /* 2D start / sign-in screen shown before entering the scene (desktop view). */
+      #startScreen {
+        position: fixed; inset: 0; z-index: 9999;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        background: radial-gradient(circle at 50% 30%, #1b3a5c 0%, #0b1a2b 70%);
+        color: #EAF6FF; font-family: system-ui, Arial, sans-serif; text-align: center;
+      }
+      #startScreen .logo { width: 64px; height: 64px; border-radius: 50%;
+        background: #FFFFFF; display: flex; align-items: center; justify-content: center;
+        margin-bottom: 18px; }
+      #startScreen .logo span { color: #0B3D74; font-weight: 800; font-size: 30px; }
+      #startScreen h1 { margin: 0 0 6px; font-size: 26px; }
+      #startScreen h2 { margin: 0 0 24px; font-weight: 400; font-size: 16px; color: #AFC8E0; }
+      #startScreen input { padding: 12px 14px; border-radius: 8px; border: none;
+        font-size: 16px; width: 240px; margin-bottom: 14px; }
+      #startScreen button { padding: 12px 26px; border-radius: 8px; border: none;
+        background: #1F8A4C; color: #fff; font-size: 17px; font-weight: 700; cursor: pointer; }
+      #startScreen button:hover { background: #25a259; }
+      #startScreen .hint { margin-top: 22px; font-size: 13px; color: #88A6C4; max-width: 360px; }
+    </style>
 
     <script>
       /* ---- Small custom components (plain JS, no extra dependencies) ---- */
@@ -20,16 +42,6 @@
             const t = this.data.target;
             if (!t) return;
             t.setAttribute('visible', !t.getAttribute('visible'));
-          });
-        }
-      });
-
-      // Hide a target entity when this entity is clicked (e.g. a Close button).
-      AFRAME.registerComponent('click-hide', {
-        schema: { target: { type: 'selector' } },
-        init: function () {
-          this.el.addEventListener('click', () => {
-            if (this.data.target) this.data.target.setAttribute('visible', false);
           });
         }
       });
@@ -83,7 +95,8 @@
           this.attempts++;
           const val = parseFloat(btn.getAttribute('data-value'));
           const isCorrect = Math.abs(val - this.data.correct) < 0.001;
-          console.log('[quiz] picked', val, '| correct?', isCorrect, '| attempt', this.attempts);
+          console.log('[quiz]', window.STUDENT_NAME || 'student', 'picked', val,
+                      '| correct?', isCorrect, '| attempt', this.attempts);
           if (isCorrect) {
             this.question.setAttribute('visible', false);
             this.done.setAttribute('visible', true);
@@ -104,67 +117,126 @@
     </script>
   </head>
   <body>
-    <!--
-      WALK PHASE: teleport movement + a clickable ATM that opens a world panel.
-        - Desktop: drag mouse to look, WASD to walk, CLICK the ATM with the mouse.
-        - Headset (Quest): point a controller at the floor + press thumbstick to
-          teleport; point at the ATM and pull the trigger to open the panel.
-      See web/README.md.
-    -->
-    <a-scene background="color: #ECECEC">
+    <!-- ===================== START / SIGN-IN SCREEN ===================== -->
+    <div id="startScreen">
+      <div class="logo"><span>F</span></div>
+      <h1>Virtual Financial Field Trips</h1>
+      <h2>First Community Bank &middot; Grades 5–8</h2>
+      <input id="studentName" type="text" placeholder="Enter your name" autocomplete="off" />
+      <button id="enterBtn">Enter the Bank</button>
+      <div class="hint">Desktop: drag to look, W/A/S/D to walk, click the ATM.<br/>
+        Headset: point at the floor to teleport, point at the ATM and pull the trigger.</div>
+    </div>
 
-      <!-- ---------- Lighting ---------- -->
-      <a-light type="ambient" color="#BBB"></a-light>
-      <a-light type="directional" color="#FFF" intensity="0.6" position="-1 2 1"></a-light>
+    <a-scene background="color: #11151b" shadow="type: pcf">
 
-      <!-- ---------- Floor (class "ground" = teleportable surface) ---------- -->
-      <a-plane class="ground" rotation="-90 0 0" width="20" height="20"
-               color="#C9B79C" shadow></a-plane>
+      <!-- ============================ LIGHTING ============================ -->
+      <a-light type="ambient" color="#9aa3ad" intensity="0.75"></a-light>
+      <!-- Sun through the entrance glass; casts soft shadows -->
+      <a-light type="directional" color="#FFF6E8" intensity="0.7"
+               position="5 6 9" castShadow="true"
+               light="shadowMapWidth: 1024; shadowMapHeight: 1024"></a-light>
+      <a-light type="point" color="#FFFFFF" intensity="0.35" position="0 3 -5"></a-light>
+      <a-light type="point" color="#FFFFFF" intensity="0.30" position="0 3 2"></a-light>
 
-      <!-- ---------- Walls ---------- -->
-      <a-box position="0 2 -10" width="20" height="4" depth="0.3" color="#D8E2EC"></a-box>
-      <a-box position="0 2 10"  width="20" height="4" depth="0.3" color="#D8E2EC"></a-box>
-      <a-box position="-10 2 0" width="0.3" height="4" depth="20" color="#D8E2EC"></a-box>
-      <a-box position="10 2 0"  width="0.3" height="4" depth="20" color="#D8E2EC"></a-box>
+      <!-- ============================ SHELL ============================== -->
+      <!-- Carpet floor -->
+      <a-plane class="ground" rotation="-90 0 0" width="12" height="16" position="0 0 -2"
+               color="#3c4149" roughness="1" shadow="receive: true"></a-plane>
+      <!-- A lighter walkway runner down the middle -->
+      <a-plane class="ground" rotation="-90 0 0" width="2.4" height="14" position="0 0.01 -2"
+               color="#4d535c" roughness="1"></a-plane>
 
-      <!-- ---------- Welcome sign ---------- -->
-      <a-entity position="0 3 -9.8">
-        <a-plane width="8" height="1.4" color="#1F6FB2"></a-plane>
-        <a-text value="FIRST COMMUNITY BANK" align="center"
-                color="#FFFFFF" width="12" position="0 0.15 0.02"></a-text>
-        <a-text value="Teleport to the ATM and tap it to begin." align="center"
-                color="#D7ECFF" width="9" position="0 -0.4 0.02"></a-text>
+      <!-- Ceiling -->
+      <a-plane rotation="90 0 0" width="12" height="16" position="0 3.2 -2" color="#e9ebee"></a-plane>
+      <!-- Recessed ceiling light panels (emissive) -->
+      <a-plane rotation="90 0 0" width="1.4" height="1.4" position="-2.5 3.18 -5" color="#FFFFFF" material="emissive: #FFFFFF; emissiveIntensity: 0.9; shader: flat"></a-plane>
+      <a-plane rotation="90 0 0" width="1.4" height="1.4" position="2.5 3.18 -5"  color="#FFFFFF" material="emissive: #FFFFFF; emissiveIntensity: 0.9; shader: flat"></a-plane>
+      <a-plane rotation="90 0 0" width="1.4" height="1.4" position="-2.5 3.18 0"  color="#FFFFFF" material="emissive: #FFFFFF; emissiveIntensity: 0.9; shader: flat"></a-plane>
+      <a-plane rotation="90 0 0" width="1.4" height="1.4" position="2.5 3.18 0"   color="#FFFFFF" material="emissive: #FFFFFF; emissiveIntensity: 0.9; shader: flat"></a-plane>
+
+      <!-- Back wall + deep-blue accent panel with branding -->
+      <a-box position="0 1.6 -10" width="12" height="3.2" depth="0.2" color="#d7dbe0"></a-box>
+      <a-box position="0 1.85 -9.88" width="7" height="2.1" depth="0.06" color="#0B3D74"></a-box>
+      <a-circle position="-2.2 2.25 -9.84" radius="0.32" color="#FFFFFF"></a-circle>
+      <a-text value="F" align="center" color="#0B3D74" width="6" position="-2.2 2.25 -9.82"></a-text>
+      <a-text value="FIRST COMMUNITY BANK" align="left" color="#FFFFFF" width="6.5"
+              position="-1.7 2.3 -9.82" anchor="left"></a-text>
+      <a-text value="Member FDIC" align="left" color="#AFC8E0" width="3"
+              position="-1.7 1.95 -9.82" anchor="left"></a-text>
+
+      <!-- Side walls -->
+      <a-box position="-6 1.6 -2" width="0.2" height="3.2" depth="16" color="#cfd4da"></a-box>
+      <a-box position="6 1.6 -2"  width="0.2" height="3.2" depth="16" color="#cfd4da"></a-box>
+
+      <!-- Front wall = glass entrance.  Dark frame mullions + tinted glass + daylight -->
+      <a-box position="0 1.6 6" width="12" height="0.2" depth="0.2" color="#2a2e35"></a-box> <!-- top frame -->
+      <a-box position="-4 1.6 6" width="0.15" height="3.2" depth="0.2" color="#2a2e35"></a-box>
+      <a-box position="0 1.6 6"  width="0.15" height="3.2" depth="0.2" color="#2a2e35"></a-box>
+      <a-box position="4 1.6 6"  width="0.15" height="3.2" depth="0.2" color="#2a2e35"></a-box>
+      <a-plane position="0 1.6 5.98" width="11.6" height="3.0"
+               material="color: #cfe8f5; opacity: 0.22; transparent: true; metalness: 0.1; roughness: 0.05"></a-plane>
+      <!-- Daylight beyond the glass -->
+      <a-plane position="0 2 7.2" width="14" height="6"
+               material="color: #d8ecff; emissive: #d8ecff; emissiveIntensity: 0.6; shader: flat"></a-plane>
+
+      <!-- ======================= RECEPTION DESK ========================= -->
+      <a-box position="0 0.55 -7" width="5" height="1.1" depth="1.1" color="#1d3a5f" shadow="cast: true"></a-box>
+      <a-box position="0 0.5 -6.45" width="5" height="0.9" depth="0.1" color="#6b4a2f"></a-box> <!-- wood kick -->
+      <a-box position="0 1.16 -7" width="5.4" height="0.08" depth="1.5" color="#11161d"></a-box> <!-- counter top -->
+      <a-text value="WELCOME" align="center" color="#cfe2ff" width="5" position="0 0.62 -6.43"></a-text>
+
+      <!-- Simple teller standing behind the desk -->
+      <a-entity position="0 0 -7.9">
+        <a-cylinder position="0 1.0 0" radius="0.26" height="1.25" color="#2b3552" shadow="cast: true"></a-cylinder>
+        <a-sphere position="0 1.82 0" radius="0.17" color="#c89b74"></a-sphere>
+        <a-box position="0 1.62 0.0" width="0.5" height="0.18" depth="0.34" color="#1d2436"></a-box> <!-- shoulders -->
       </a-entity>
 
-      <!-- ---------- Teller counter ---------- -->
-      <a-box position="0 0.6 -5" width="6" height="1.2" depth="1" color="#8C6239" shadow></a-box>
-      <a-box position="0 1.25 -5" width="6" height="0.1" depth="1.2" color="#A9784C" shadow></a-box>
-      <a-text value="TELLER" align="center" color="#3A2A14"
-              width="6" position="0 1.4 -4.45" rotation="-30 0 0"></a-text>
+      <!-- ============================ ATM ============================== -->
+      <!-- Branded kiosk on the right, near the back wall -->
+      <a-entity position="4.3 0 -9.3">
+        <a-box position="0 1.05 0" width="1.1" height="2.1" depth="0.5" color="#171b24" shadow="cast: true"></a-box>
+        <a-box position="0 2.05 0.01" width="1.1" height="0.42" depth="0.52" color="#0B5CAB"></a-box>
+        <a-text value="ATM" align="center" color="#FFFFFF" width="3.4" position="0 2.05 0.28"></a-text>
+        <!-- Glowing screen = the clickable target -->
+        <a-plane id="atm" class="clickable" hover-highlight click-toggle="target: #atmPanel"
+                 position="0 1.45 0.26" width="0.62" height="0.46"
+                 material="color: #0e2a4a; emissive: #1E5FA8; emissiveIntensity: 0.7"></a-plane>
+        <a-text value="Touch to start" align="center" color="#bfe0ff" width="2.2" position="0 1.45 0.27"></a-text>
+        <!-- Keypad + card slot detailing -->
+        <a-box position="0 1.0 0.26" width="0.5" height="0.28" depth="0.04" color="#0d1119"></a-box>
+        <a-box position="0 1.2 0.27" width="0.42" height="0.04" depth="0.03" color="#3aa0ff"></a-box> <!-- card slot glow -->
+      </a-entity>
 
-      <!-- ---------- ATM (clickable: opens the panel below) ---------- -->
-      <a-box id="atm" class="clickable" hover-highlight
-             click-toggle="target: #atmPanel"
-             position="6 1 -5" width="1" height="2" depth="0.6"
-             color="#2E3B45" shadow></a-box>
-      <a-text value="ATM" align="center" color="#9FE3FF"
-              width="3" position="6 1.6 -4.69"></a-text>
+      <!-- ======================= WELCOME KIOSKS ======================== -->
+      <a-entity position="-4.6 0 0.5" rotation="0 35 0">
+        <a-box position="0 1.0 0" width="0.7" height="2.0" depth="0.08" color="#0B5CAB" shadow="cast: true"></a-box>
+        <a-text value="WELCOME" align="center" color="#FFFFFF" width="1.8" position="0 1.55 0.05"></a-text>
+        <a-text value="Step up to\nthe teller or\nthe ATM" align="center" color="#dbeaff" width="1.4" position="0 1.0 0.05"></a-text>
+      </a-entity>
 
-      <!-- ---------- World-space ATM panel: interactive math flow ---------- -->
-      <a-entity id="atmPanel" visible="false" money-quiz="correct: 37.25" position="6 1.6 -3.6">
-        <!-- Backdrop -->
-        <a-plane width="2.4" height="1.8" color="#0F2230" opacity="0.96"
-                 material="shader: flat"></a-plane>
+      <!-- ============================ PLANTS =========================== -->
+      <a-entity position="-5.2 0 -9">
+        <a-cylinder position="0 0.25 0" radius="0.22" height="0.5" color="#5b4636"></a-cylinder>
+        <a-sphere position="0 0.85 0" radius="0.45" color="#2f6b3a"></a-sphere>
+      </a-entity>
+      <a-entity position="5.2 0 3.5">
+        <a-cylinder position="0 0.25 0" radius="0.22" height="0.5" color="#5b4636"></a-cylinder>
+        <a-sphere position="0 0.85 0" radius="0.45" color="#356f40"></a-sphere>
+      </a-entity>
 
-        <!-- Corner close (X) — always available -->
+      <!-- =================== WORLD-SPACE ATM PANEL ===================== -->
+      <a-entity id="atmPanel" visible="false" money-quiz="correct: 37.25" position="4.3 1.6 -8.0">
+        <a-plane width="2.4" height="1.8" color="#0F2230" opacity="0.96" material="shader: flat"></a-plane>
+
         <a-plane class="clickable close-panel" hover-highlight color="#1F6FB2"
                  width="0.22" height="0.22" position="1.05 0.78 0.03"
                  text="value: X; align: center; color: #FFFFFF; width: 1.4"></a-plane>
 
         <!-- Screen 1: intro -->
         <a-entity id="screen-intro" position="0 0 0.03">
-          <a-text value="WELCOME TO THE ATM" align="center" color="#9FE3FF"
-                  width="2.4" position="0 0.66 0"></a-text>
+          <a-text value="WELCOME TO THE ATM" align="center" color="#9FE3FF" width="2.4" position="0 0.66 0"></a-text>
           <a-text width="2.2" align="center" color="#EAF6FF" position="0 0.12 0"
                   value="You earned $50.00 mowing lawns.\nYou owe the bank $12.75.\n\nLet's figure out what's left."></a-text>
           <a-plane id="beginBtn" class="clickable" hover-highlight color="#1F8A4C"
@@ -172,7 +244,7 @@
                    text="value: BEGIN; align: center; color: #FFFFFF; width: 2"></a-plane>
         </a-entity>
 
-        <!-- Screen 2: the question (decimal subtraction) -->
+        <!-- Screen 2: the question -->
         <a-entity id="screen-question" visible="false" position="0 0 0.03">
           <a-text width="2.2" align="center" color="#EAF6FF" position="0 0.66 0"
                   value="You have $50.00 and pay $12.75.\nHow much do you have left?"></a-text>
@@ -188,14 +260,12 @@
           <a-plane class="clickable answer" hover-highlight data-value="47.25" color="#20486B"
                    width="1.0" height="0.32" position="0.58 -0.20 0"
                    text="value: $47.25; align: center; color: #FFFFFF; width: 2"></a-plane>
-          <a-text id="hint" width="2.2" align="center" color="#FFD27F"
-                  position="0 -0.66 0" value=""></a-text>
+          <a-text id="hint" width="2.2" align="center" color="#FFD27F" position="0 -0.66 0" value=""></a-text>
         </a-entity>
 
         <!-- Screen 3: success / debrief -->
         <a-entity id="screen-done" visible="false" position="0 0 0.03">
-          <a-text value="Correct! Nice work." align="center" color="#9CFFB0"
-                  width="2.4" position="0 0.6 0"></a-text>
+          <a-text value="Correct! Nice work." align="center" color="#9CFFB0" width="2.4" position="0 0.6 0"></a-text>
           <a-text width="2.2" align="center" color="#EAF6FF" position="0 0.0 0"
                   value="You used decimal subtraction to handle\nreal money: $50.00 - $12.75 = $37.25.\n\nThat's the same math grown-ups use\nevery day."></a-text>
           <a-plane class="clickable close-panel" hover-highlight color="#1F6FB2"
@@ -204,16 +274,14 @@
         </a-entity>
       </a-entity>
 
-      <!-- ---------- Player rig ---------- -->
-      <a-entity id="rig" position="0 0 3">
+      <!-- ========================= PLAYER RIG ========================== -->
+      <a-entity id="rig" position="0 0 3.5">
         <a-camera id="camera" position="0 1.6 0" wasd-controls="acceleration: 30" look-controls></a-camera>
-
-        <!-- VR controllers: laser for pointing/clicking, blink-controls for teleport -->
         <a-entity id="leftHand" laser-controls="hand: left"
-                  raycaster="objects: .clickable; far: 12"
+                  raycaster="objects: .clickable; far: 14"
                   blink-controls="cameraRig: #rig; teleportOrigin: #camera; collisionEntities: .ground; buttons: trigger, thumbstick"></a-entity>
         <a-entity id="rightHand" laser-controls="hand: right"
-                  raycaster="objects: .clickable; far: 12"
+                  raycaster="objects: .clickable; far: 14"
                   blink-controls="cameraRig: #rig; teleportOrigin: #camera; collisionEntities: .ground; buttons: trigger, thumbstick"></a-entity>
       </a-entity>
 
@@ -221,5 +289,21 @@
       <a-entity cursor="rayOrigin: mouse" raycaster="objects: .clickable; far: 30"></a-entity>
 
     </a-scene>
+
+    <script>
+      // Wire the start screen: capture the student's name, then reveal the scene.
+      (function () {
+        const start = document.getElementById('startScreen');
+        const btn = document.getElementById('enterBtn');
+        const nameInput = document.getElementById('studentName');
+        function enter() {
+          window.STUDENT_NAME = (nameInput.value || '').trim() || 'student';
+          console.log('[session] entered as', window.STUDENT_NAME);
+          start.style.display = 'none';
+        }
+        btn.addEventListener('click', enter);
+        nameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') enter(); });
+      })();
+    </script>
   </body>
 </html>
