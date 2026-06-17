@@ -10,24 +10,33 @@ build.
 
 ## What's here
 
-- `index.html` — a **bank lobby** with a **start/sign-in screen** (asks the
-  student's name, then enters), **teleport locomotion**, and an **interactive
-  ATM** (`../docs/01-roadmap.md`). The interior has a ceiling with lights, carpet,
-  a glass entrance with daylight, a branded accent wall, a reception desk with a
-  teller, a branded ATM kiosk, welcome kiosks, and plants. Clicking the ATM opens
-  a world-space panel that runs the first math step: a decimal-subtraction
-  question ($50.00 − $12.75) with selectable answers, a hint on a wrong choice,
-  and a success/debrief screen.
+- `index.html` — the full bank scene and all interaction logic.
+- `assets/models/*.glb` — imported 3D models (teller desk/counter, ATM, teller
+  NPC) used for the lobby. The shell (walls, floor, ceiling, lights, glass
+  entrance, plants) is still A-Frame primitives.
+
+### The complete MVP scenario flow
+1. **Start / sign-in screen** — student enters a name, clicks *Enter the Bank*.
+2. **ATM (decimal subtraction)** — click the ATM → a world panel poses
+   "$50.00 − $12.75 = ?" with answer choices; wrong answers give a hint and
+   allow retries.
+3. **Teller deposit (make change)** — at the desk, tap bills/coins ($20/$10/$5/$1
+   and 25¢) to assemble exactly **$37.25**, then press **DEPOSIT**. The tray total
+   and the **Savings ledger** update; the field trip completes.
+
+Attempt/selection data is logged to the browser console (open with F12) as a
+stand-in for a future teacher dashboard.
 
 ## On visual realism
 
-This interior is built from A-Frame **primitives** (boxes, planes) with lighting
-and materials — believable, but not photorealistic. Photoreal interiors like a
-reference render come from **imported 3D model assets** (glTF/`.glb` files with
-textures, e.g. free models from Poly Pizza / Sketchfab / Quaternius) or from the
-Unity path. Dropping real furniture/ATM/teller models into this scene with
-`<a-gltf-model>` is the next realism step whenever you want it — the interaction
-code stays the same.
+The lobby now uses imported **glTF/`.glb` models** for the desk, ATM, and teller,
+which is a big step up from primitives. For the surrounding shell and for even
+higher fidelity, you can keep swapping in more `.glb` assets (free sources: Poly
+Pizza / Sketchfab / Quaternius) — the interaction code stays the same.
+
+> Model orientation: if any imported model faces away from the player, flip its
+> `rotation` Y by 180 in `index.html` (each model entity has a comment noting
+> this). Positions may also need small nudges to sit flush with the walls/floor.
 
 ## Controls
 
@@ -68,16 +77,18 @@ WebXR needs **HTTPS**. Easiest options:
 Then, in the Quest browser, open the page and tap the **VR goggles button** in
 the bottom-right corner to enter immersive mode.
 
-## Next steps (turn walk → run)
+## Status & next steps
 - [x] VR **teleport locomotion**.
-- [x] Make the **ATM** interactive (opens a world-space panel).
-- [x] First interactive **math step**: $50.00 − $12.75 with answer choices, a
-      hint on wrong answers, and a debrief.
-- [ ] Add grabbable **money objects** (bills/coins) and a tray that sums them
-      (the "make change" manipulation step).
-- [ ] Deposit step + on-screen ledger.
-- [ ] Real attempt/time **logging** for teachers (currently just `console.log`).
+- [x] Interactive **ATM** with a decimal-subtraction question (hint + retries).
+- [x] **Make-change deposit** step at the teller + a savings **ledger**.
+- [x] Imported **glTF models** (desk, ATM, teller).
+- [x] **Start/sign-in** screen capturing the student name.
+- [ ] Tune model **orientation/placement** to sit flush (needs a visual pass).
+- [ ] **Bill/coin objects** you physically grab (vs. tap) for stronger VR feel.
+- [ ] Persist attempt/time **logging** off the console for teachers.
+- [ ] More scenarios (currency exchange, dealership) reusing these components.
 
-The math logic lives in the `money-quiz` component in `index.html`, kept separate
-from the scene markup per `../docs/03-architecture.md`. These map to Phase 3 (the
-MVP vertical slice) in `../docs/01-roadmap.md`.
+The math/flow logic lives in the `money-quiz` and `deposit-station` components in
+`index.html`, kept separate from the scene markup per
+`../docs/03-architecture.md`. This completes the Phase 3 MVP vertical slice in
+`../docs/01-roadmap.md`.

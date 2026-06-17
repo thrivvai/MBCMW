@@ -114,6 +114,59 @@
           this.el.querySelectorAll('.answer').forEach((b) => b.setAttribute('color', '#20486B'));
         }
       });
+
+      /*
+        deposit-station: the "make change & deposit" step at the teller.
+        Student taps bills/coins to assemble an exact amount, then deposits it;
+        the ledger (savings balance) updates. Money is tracked in CENTS to avoid
+        floating-point rounding. Math/flow kept out of the markup per
+        docs/03-architecture.md.
+      */
+      AFRAME.registerComponent('deposit-station', {
+        schema: { target: { type: 'int', default: 3725 } }, // cents to assemble
+        init: function () {
+          this.stack = [];          // denominations added (cents)
+          this.savings = 0;         // running ledger balance (cents)
+          this.totalText = this.el.querySelector('#depTotal');
+          this.feedback  = this.el.querySelector('#depFeedback');
+          this.ledger    = this.el.querySelector('#ledgerBal');
+
+          this.el.querySelectorAll('.denom').forEach((b) => {
+            b.addEventListener('click', () => {
+              this.stack.push(parseInt(b.getAttribute('data-cents'), 10));
+              this.feedback.setAttribute('value', '');
+              this.render();
+            });
+          });
+          this.el.querySelector('#undoBtn').addEventListener('click', () => {
+            this.stack.pop(); this.render();
+          });
+          this.el.querySelector('#depositBtn').addEventListener('click', () => this.deposit());
+          this.render();
+        },
+        total: function () { return this.stack.reduce((a, b) => a + b, 0); },
+        fmt: function (c) { return '$' + (c / 100).toFixed(2); },
+        render: function () {
+          this.totalText.setAttribute('value', 'Tray: ' + this.fmt(this.total()));
+        },
+        deposit: function () {
+          const t = this.total();
+          if (t === this.data.target) {
+            this.savings += t;
+            this.ledger.setAttribute('value', 'Savings: ' + this.fmt(this.savings));
+            this.feedback.setAttribute('color', '#9CFFB0');
+            this.feedback.setAttribute('value', 'Deposited ' + this.fmt(t) + '! Field trip complete.');
+            console.log('[deposit]', window.STUDENT_NAME || 'student', 'deposited', t, 'cents');
+            this.stack = []; this.render();
+          } else {
+            const diff = this.data.target - t;
+            const msg = diff > 0 ? ('You have ' + this.fmt(t) + '. You need ' + this.fmt(diff) + ' more.')
+                                 : ('That is ' + this.fmt(-diff) + ' too much. Tap UNDO.');
+            this.feedback.setAttribute('color', '#FFD27F');
+            this.feedback.setAttribute('value', msg);
+          }
+        }
+      });
     </script>
   </head>
   <body>
@@ -129,6 +182,13 @@
     </div>
 
     <a-scene background="color: #11151b" shadow="type: pcf">
+
+      <!-- ===================== 3D MODEL ASSETS ========================= -->
+      <a-assets>
+        <a-asset-item id="deskModel"   src="assets/models/vr_bank_teller_desk_counter.glb"></a-asset-item>
+        <a-asset-item id="atmModel"    src="assets/models/vr_bank_atm.glb"></a-asset-item>
+        <a-asset-item id="tellerModel" src="assets/models/vr_bank_teller_npc.glb"></a-asset-item>
+      </a-assets>
 
       <!-- ============================ LIGHTING ============================ -->
       <a-light type="ambient" color="#9aa3ad" intensity="0.75"></a-light>
@@ -180,34 +240,55 @@
       <a-plane position="0 2 7.2" width="14" height="6"
                material="color: #d8ecff; emissive: #d8ecff; emissiveIntensity: 0.6; shader: flat"></a-plane>
 
-      <!-- ======================= RECEPTION DESK ========================= -->
-      <a-box position="0 0.55 -7" width="5" height="1.1" depth="1.1" color="#1d3a5f" shadow="cast: true"></a-box>
-      <a-box position="0 0.5 -6.45" width="5" height="0.9" depth="0.1" color="#6b4a2f"></a-box> <!-- wood kick -->
-      <a-box position="0 1.16 -7" width="5.4" height="0.08" depth="1.5" color="#11161d"></a-box> <!-- counter top -->
-      <a-text value="WELCOME" align="center" color="#cfe2ff" width="5" position="0 0.62 -6.43"></a-text>
+      <!-- ============= RECEPTION DESK + TELLER (3D models) ============= -->
+      <!-- If a model faces away from the player, flip its rotation Y by 180. -->
+      <a-entity gltf-model="#deskModel"   position="0 0 -6.7" rotation="0 0 0" shadow="cast: true"></a-entity>
+      <a-entity gltf-model="#tellerModel" position="0 0 -7.5" rotation="0 0 0" shadow="cast: true"></a-entity>
 
-      <!-- Simple teller standing behind the desk -->
-      <a-entity position="0 0 -7.9">
-        <a-cylinder position="0 1.0 0" radius="0.26" height="1.25" color="#2b3552" shadow="cast: true"></a-cylinder>
-        <a-sphere position="0 1.82 0" radius="0.17" color="#c89b74"></a-sphere>
-        <a-box position="0 1.62 0.0" width="0.5" height="0.18" depth="0.34" color="#1d2436"></a-box> <!-- shoulders -->
+      <!-- ============== DEPOSIT STATION (make change step) ============= -->
+      <a-entity id="depositStation" deposit-station="target: 3725" position="0 1.55 -5.85">
+        <a-plane width="3.2" height="2.2" color="#0F2230" opacity="0.95" material="shader: flat"></a-plane>
+        <a-text value="TELLER - MAKE YOUR DEPOSIT" align="center" color="#9FE3FF" width="3.4" position="0 0.92 0.02"></a-text>
+        <a-text width="3.0" align="center" color="#EAF6FF" position="0 0.64 0.02"
+                value="Tap bills and coins to build $37.25,\nthen press DEPOSIT."></a-text>
+
+        <!-- denominations (cents) -->
+        <a-plane class="clickable denom" hover-highlight data-cents="2000" color="#1F6FB2"
+                 width="0.56" height="0.34" position="-1.16 0.26 0.02"
+                 text="value: $20; align: center; color: #FFFFFF; width: 1.6"></a-plane>
+        <a-plane class="clickable denom" hover-highlight data-cents="1000" color="#1F6FB2"
+                 width="0.56" height="0.34" position="-0.58 0.26 0.02"
+                 text="value: $10; align: center; color: #FFFFFF; width: 1.6"></a-plane>
+        <a-plane class="clickable denom" hover-highlight data-cents="500" color="#1F6FB2"
+                 width="0.56" height="0.34" position="0 0.26 0.02"
+                 text="value: $5; align: center; color: #FFFFFF; width: 1.6"></a-plane>
+        <a-plane class="clickable denom" hover-highlight data-cents="100" color="#1F6FB2"
+                 width="0.56" height="0.34" position="0.58 0.26 0.02"
+                 text="value: $1; align: center; color: #FFFFFF; width: 1.6"></a-plane>
+        <a-plane class="clickable denom" hover-highlight data-cents="25" color="#2E7D32"
+                 width="0.56" height="0.34" position="1.16 0.26 0.02"
+                 text="value: 25c; align: center; color: #FFFFFF; width: 1.6"></a-plane>
+
+        <a-text id="depTotal" value="Tray: $0.00" align="center" color="#FFE9A8" width="3.0" position="0 -0.06 0.02"></a-text>
+
+        <a-plane id="undoBtn" class="clickable" hover-highlight color="#6b4a2f"
+                 width="0.95" height="0.32" position="-0.62 -0.46 0.02"
+                 text="value: UNDO; align: center; color: #FFFFFF; width: 2"></a-plane>
+        <a-plane id="depositBtn" class="clickable" hover-highlight color="#1F8A4C"
+                 width="0.95" height="0.32" position="0.62 -0.46 0.02"
+                 text="value: DEPOSIT; align: center; color: #FFFFFF; width: 2"></a-plane>
+
+        <a-text id="depFeedback" value="" align="center" color="#FFD27F" width="3.0" position="0 -0.78 0.02"></a-text>
+        <a-text id="ledgerBal" value="Savings: $0.00" align="center" color="#9FE3FF" width="3.0" position="0 -0.98 0.02"></a-text>
       </a-entity>
 
-      <!-- ============================ ATM ============================== -->
-      <!-- Branded kiosk on the right, near the back wall -->
-      <a-entity position="4.3 0 -9.3">
-        <a-box position="0 1.05 0" width="1.1" height="2.1" depth="0.5" color="#171b24" shadow="cast: true"></a-box>
-        <a-box position="0 2.05 0.01" width="1.1" height="0.42" depth="0.52" color="#0B5CAB"></a-box>
-        <a-text value="ATM" align="center" color="#FFFFFF" width="3.4" position="0 2.05 0.28"></a-text>
-        <!-- Glowing screen = the clickable target -->
-        <a-plane id="atm" class="clickable" hover-highlight click-toggle="target: #atmPanel"
-                 position="0 1.45 0.26" width="0.62" height="0.46"
-                 material="color: #0e2a4a; emissive: #1E5FA8; emissiveIntensity: 0.7"></a-plane>
-        <a-text value="Touch to start" align="center" color="#bfe0ff" width="2.2" position="0 1.45 0.27"></a-text>
-        <!-- Keypad + card slot detailing -->
-        <a-box position="0 1.0 0.26" width="0.5" height="0.28" depth="0.04" color="#0d1119"></a-box>
-        <a-box position="0 1.2 0.27" width="0.42" height="0.04" depth="0.03" color="#3aa0ff"></a-box> <!-- card slot glow -->
-      </a-entity>
+      <!-- ===================== ATM (3D model) ========================= -->
+      <!-- Against the right wall, front turned toward the room (-X). -->
+      <a-entity gltf-model="#atmModel" position="5.65 0 -3" rotation="0 -90 0" shadow="cast: true"></a-entity>
+      <!-- Invisible-ish clickable target over the ATM screen (opens the panel) -->
+      <a-plane id="atm" class="clickable" hover-highlight click-toggle="target: #atmPanel"
+               position="5.42 1.45 -3" rotation="0 -90 0" width="0.6" height="0.46"
+               material="color: #1E5FA8; opacity: 0.18; transparent: true"></a-plane>
 
       <!-- ======================= WELCOME KIOSKS ======================== -->
       <a-entity position="-4.6 0 0.5" rotation="0 35 0">
@@ -227,7 +308,7 @@
       </a-entity>
 
       <!-- =================== WORLD-SPACE ATM PANEL ===================== -->
-      <a-entity id="atmPanel" visible="false" money-quiz="correct: 37.25" position="4.3 1.6 -8.0">
+      <a-entity id="atmPanel" visible="false" money-quiz="correct: 37.25" position="4.95 1.6 -3" rotation="0 -90 0">
         <a-plane width="2.4" height="1.8" color="#0F2230" opacity="0.96" material="shader: flat"></a-plane>
 
         <a-plane class="clickable close-panel" hover-highlight color="#1F6FB2"
@@ -267,7 +348,7 @@
         <a-entity id="screen-done" visible="false" position="0 0 0.03">
           <a-text value="Correct! Nice work." align="center" color="#9CFFB0" width="2.4" position="0 0.6 0"></a-text>
           <a-text width="2.2" align="center" color="#EAF6FF" position="0 0.0 0"
-                  value="You used decimal subtraction to handle\nreal money: $50.00 - $12.75 = $37.25.\n\nThat's the same math grown-ups use\nevery day."></a-text>
+                  value="You used decimal subtraction:\n$50.00 - $12.75 = $37.25.\n\nNow step to the teller and deposit\nyour $37.25 into savings."></a-text>
           <a-plane class="clickable close-panel" hover-highlight color="#1F6FB2"
                    width="1.0" height="0.32" position="0 -0.62 0"
                    text="value: DONE; align: center; color: #FFFFFF; width: 2"></a-plane>
