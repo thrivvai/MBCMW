@@ -34,9 +34,11 @@ which is a big step up from primitives. For the surrounding shell and for even
 higher fidelity, you can keep swapping in more `.glb` assets (free sources: Poly
 Pizza / Sketchfab / Quaternius) — the interaction code stays the same.
 
-> Model orientation: if any imported model faces away from the player, flip its
-> `rotation` Y by 180 in `index.html` (each model entity has a comment noting
-> this). Positions may also need small nudges to sit flush with the walls/floor.
+> Model orientation: these `.glb` files are authored **Z-up**, so each model sits
+> inside a wrapper that rotates it −90° on X to stand upright. If a model faces
+> the wrong way, change the **outer** entity's yaw (the middle rotation number)
+> in `index.html` — each has a comment showing exactly where. Positions may also
+> need small nudges to sit flush with the walls/floor.
 
 ## Controls
 
@@ -56,16 +58,20 @@ Dependencies (both loaded from a CDN, nothing to install): A-Frame core +
 ## How to run it
 
 ### On your computer (no headset needed)
-Just **open `index.html` in a browser** (Chrome/Edge/Firefox). Drag the mouse to
-look around; use **W/A/S/D** to walk.
 
-> Some browsers restrict features on `file://` pages. If anything looks off,
-> serve the folder instead:
+> ⚠️ **You must serve the folder over http — do NOT double-click the file.**
+> Browsers block loading local `.glb` 3D models over `file://`, so opening
+> `index.html` directly makes the desk, ATM, and teller silently disappear (the
+> walls/floor still show). Run a tiny local server instead:
 > ```
 > cd web
 > python3 -m http.server 8000
 > ```
-> then visit http://localhost:8000
+> then visit **http://localhost:8000**. Drag the mouse to look, W/A/S/D to walk.
+
+Open the browser console (F12) — you should see `[model] LOADED ...` for each of
+the three models. A `[model] FAILED` line means the page can't reach the `.glb`
+files (almost always the `file://` problem above).
 
 ### On a Quest headset (later)
 WebXR needs **HTTPS**. Easiest options:

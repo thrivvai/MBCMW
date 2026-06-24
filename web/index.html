@@ -167,6 +167,16 @@
           }
         }
       });
+
+      // Logs whether each glTF model actually loaded (helps diagnose blank spots).
+      AFRAME.registerComponent('model-status', {
+        init: function () {
+          const src = this.el.getAttribute('gltf-model');
+          this.el.addEventListener('model-loaded', () => console.log('[model] LOADED', src));
+          this.el.addEventListener('model-error', (e) =>
+            console.warn('[model] FAILED to load', src, '- if you opened the file via file://, serve it over http instead.', e.detail));
+        }
+      });
     </script>
   </head>
   <body>
@@ -241,9 +251,15 @@
                material="color: #d8ecff; emissive: #d8ecff; emissiveIntensity: 0.6; shader: flat"></a-plane>
 
       <!-- ============= RECEPTION DESK + TELLER (3D models) ============= -->
-      <!-- If a model faces away from the player, flip its rotation Y by 180. -->
-      <a-entity gltf-model="#deskModel"   position="0 0 -6.7" rotation="0 0 0" shadow="cast: true"></a-entity>
-      <a-entity gltf-model="#tellerModel" position="0 0 -7.5" rotation="0 0 0" shadow="cast: true"></a-entity>
+      <!-- These models are authored Z-up, so the INNER entity rotates -90 X to
+           stand them upright. Set the OUTER entity's middle (yaw) number to face
+           them: if a model's back faces you, change "0 0 0" to "0 180 0". -->
+      <a-entity position="0 0 -6.7" rotation="0 0 0">
+        <a-entity gltf-model="#deskModel" model-status rotation="-90 0 0" shadow="cast: true"></a-entity>
+      </a-entity>
+      <a-entity position="0 0 -7.5" rotation="0 0 0">
+        <a-entity gltf-model="#tellerModel" model-status rotation="-90 0 0" shadow="cast: true"></a-entity>
+      </a-entity>
 
       <!-- ============== DEPOSIT STATION (make change step) ============= -->
       <a-entity id="depositStation" deposit-station="target: 3725" position="0 1.55 -5.85">
@@ -283,8 +299,11 @@
       </a-entity>
 
       <!-- ===================== ATM (3D model) ========================= -->
-      <!-- Against the right wall, front turned toward the room (-X). -->
-      <a-entity gltf-model="#atmModel" position="5.65 0 -3" rotation="0 -90 0" shadow="cast: true"></a-entity>
+      <!-- Inner -90 X stands the Z-up model up; outer yaw turns its front toward
+           the room. If the screen faces the wall, change "0 -90 0" to "0 90 0". -->
+      <a-entity position="5.65 0 -3" rotation="0 -90 0">
+        <a-entity gltf-model="#atmModel" model-status rotation="-90 0 0" shadow="cast: true"></a-entity>
+      </a-entity>
       <!-- Invisible-ish clickable target over the ATM screen (opens the panel) -->
       <a-plane id="atm" class="clickable" hover-highlight click-toggle="target: #atmPanel"
                position="5.42 1.45 -3" rotation="0 -90 0" width="0.6" height="0.46"
